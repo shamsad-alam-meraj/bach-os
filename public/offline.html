@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline - Meal System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          rgba(59, 130, 246, 0.1) 0%,
+          rgba(139, 92, 246, 0.1) 50%,
+          rgba(236, 72, 153, 0.1) 100%
+        );
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 500px;
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 24px;
+        background: #f3f4f6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+      }
+
+      h1 {
+        font-size: 28px;
+        margin-bottom: 12px;
+        color: #1f2937;
+      }
+
+      p {
+        color: #6b7280;
+        margin-bottom: 24px;
+        line-height: 1.6;
+      }
+
+      .features {
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+        text-align: left;
+      }
+
+      .features h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
+      }
+
+      .features ul {
+        list-style: none;
+      }
+
+      .features li {
+        font-size: 14px;
+        color: #6b7280;
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .features li:before {
+        content: '✓';
+        color: #10b981;
+        font-weight: bold;
+        margin-right: 8px;
+      }
+
+      button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background: #2563eb;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      .status {
+        margin-top: 24px;
+        padding: 12px;
+        background: #fef3c7;
+        border: 1px solid #fcd34d;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #92400e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">📡</div>
+      <h1>You're Offline</h1>
+      <p>
+        It looks like you've lost your internet connection. Don't worry, you can still use the app
+        with cached data.
+      </p>
+
+      <div class="features">
+        <h3>What you can do offline:</h3>
+        <ul>
+          <li>View your dashboard and recent data</li>
+          <li>Check meal records and expenses</li>
+          <li>View member information</li>
+          <li>Review analytics and reports</li>
+        </ul>
+      </div>
+
+      <button onclick="goBack()">Go Back</button>
+
+      <div class="status">
+        <strong>Tip:</strong> Your changes will sync automatically when you're back online.
+      </div>
+    </div>
+
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+
+      // Check connection status
+      window.addEventListener('online', () => {
+        console.log('Back online!');
+        // Trigger sync
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+          navigator.serviceWorker.ready.then((registration) => {
+            registration.sync.register('sync-meals');
+            registration.sync.register('sync-expenses');
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
