@@ -24,6 +24,7 @@ interface Expense {
   amount: number;
   category: string;
   addedBy: User;
+  expensedBy: User;
   date: string;
 }
 
@@ -69,10 +70,10 @@ export default function ExpensesPage() {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      food: 'bg-green-100 text-green-800',
-      utilities: 'bg-blue-100 text-blue-800',
-      maintenance: 'bg-orange-100 text-orange-800',
-      other: 'bg-gray-100 text-gray-800',
+      food: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+      utilities: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+      maintenance: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+      other: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
     };
     return colors[category] || colors.other;
   };
@@ -151,12 +152,18 @@ export default function ExpensesPage() {
                               {expense.category}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground">
-                            Added by {expense.addedBy.name} on{' '}
-                            {new Date(expense.date).toLocaleDateString()}
-                          </p>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <p>
+                              Expensed by <strong>{expense?.expensedBy?.name}</strong>
+                            </p>
+                            <span>•</span>
+                            <p>
+                              Added by {expense.addedBy.name} on{' '}
+                              {new Date(expense.date).toLocaleDateString()}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-2xl font-bold text-primary">₹{expense.amount}</p>
+                        <p className="text-2xl font-bold text-primary">৳{expense.amount}</p>
                       </div>
                     ))}
                   </div>

@@ -13,9 +13,9 @@ import {
   Calendar,
   DollarSign,
   PieChart,
-  TrendingUp,
   Users,
   UtensilsCrossed,
+  Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -39,7 +39,7 @@ interface Mess {
   mealRate: number;
   totalExpenses: number;
   totalMeals: number;
-  avgPerMember: number;
+  totalDeposits: number;
   currency: string;
   createdAt: string;
   updatedAt: string;
@@ -69,10 +69,11 @@ interface DashboardData {
     totalMembers: number;
     totalMeals: number;
     totalExpenses: number;
+    totalDeposits: number;
     mealRate: number;
-    avgPerMember: number;
     expenseCount: number;
     mealEntries: number;
+    depositCount: number;
   };
   memberStats: Array<{
     userId: string;
@@ -180,10 +181,11 @@ export default function DashboardPage() {
   const totalMembers = monthlyStats?.totalMembers || 0;
   const totalMeals = monthlyStats?.totalMeals || 0;
   const totalExpenses = monthlyStats?.totalExpenses || 0;
-  const avgPerMember = monthlyStats?.avgPerMember || 0;
+  const totalDeposits = monthlyStats?.totalDeposits || 0;
   const currentMealRate = monthlyStats?.mealRate || 0;
   const expenseCount = monthlyStats?.expenseCount || 0;
   const mealEntries = monthlyStats?.mealEntries || 0;
+  const depositCount = monthlyStats?.depositCount || 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -293,10 +295,10 @@ export default function DashboardPage() {
                   icon={<DollarSign className="w-5 h-5" />}
                 />
                 <StatCard
-                  title="Avg Per Member"
-                  value={`৳${avgPerMember.toLocaleString()}`}
-                  description="This month"
-                  icon={<TrendingUp className="w-5 h-5" />}
+                  title="Total Deposits"
+                  value={`৳${totalDeposits.toLocaleString()}`}
+                  description={`${depositCount} deposits`}
+                  icon={<Wallet className="w-5 h-5" />}
                 />
               </div>
 
