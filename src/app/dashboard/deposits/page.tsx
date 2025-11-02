@@ -50,9 +50,17 @@ export default function DepositsPage() {
   const [formData, setFormData] = useState({
     userId: '',
     amount: '',
-    date: new Date().toISOString().split('T')[0],
+    date: '',
     description: '',
   });
+
+  // Initialize date after component mounts
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      date: new Date().toISOString().split('T')[0],
+    }));
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
