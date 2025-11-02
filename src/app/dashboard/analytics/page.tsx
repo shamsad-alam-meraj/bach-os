@@ -1,63 +1,78 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AlertCircle, TrendingUp, Users, DollarSign, UtensilsCrossed } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard-header';
 import DashboardSidebar from '@/components/dashboard-sidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient } from '@/lib/api-client';
+import { motion } from 'framer-motion';
 import {
-  BarChart,
+  AlertCircle,
+  DollarSign,
+  TrendingDown,
+  TrendingUp,
+  UtensilsCrossed,
+  Wallet,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import {
   Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
+  BarChart,
+  CartesianGrid,
   Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
 } from 'recharts';
 
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  messId: string;
-}
-
-interface Meal {
-  _id: string;
-  userId: User;
-  breakfast: number;
-  lunch: number;
-  dinner: number;
-  date: string;
-}
-
-interface Expense {
-  _id: string;
-  description: string;
-  amount: number;
-  category: string;
-  addedBy: User;
-  date: string;
-}
-
-interface MemberStats {
-  name: string;
-  meals: number;
-  cost: number;
-}
-
-interface CategoryStats {
-  name: string;
-  value: number;
+interface AnalyticsData {
+  summary: {
+    totalMembers: number;
+    totalMeals: number;
+    totalExpenses: number;
+    totalDeposits: number;
+    mealRate: number;
+    expenseCount: number;
+    mealEntries: number;
+    depositCount: number;
+    period: {
+      start: string;
+      end: string;
+      month: string;
+    };
+  };
+  memberStats: Array<{
+    name: string;
+    meals: number;
+    mealCost: number;
+    totalDeposit: number;
+    mealDays: number;
+  }>;
+  financialOverview: Array<{
+    name: string;
+    value: number;
+  }>;
+  categoryStats: Array<{
+    name: string;
+    value: number;
+    count: number;
+  }>;
+  dailyTrends: Array<{
+    date: string;
+    meals: number;
+  }>;
+  calculations: {
+    avgMealsPerMember: string;
+    avgExpensePerMember: string;
+    netBalance: number;
+    mealCostPercentage: string;
+  };
 }
 
 export default function AnalyticsPage() {
@@ -65,12 +80,10 @@ export default function AnalyticsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [meals, setMeals] = useState<Meal[]>([]);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [messId, setMessId] = useState('');
-  const [mealRate, setMealRate] = useState(30);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
 
-  const COLORS = ['#3b82f6', '#8b5cf6', '#ec4853', '#f59e0b', '#10b981', '#06b6d4'];
+  const FINANCIAL_COLORS = ['#ef4444', '#10b981']; // Red for expenses, Green for deposits
+  const CATEGORY_COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'];
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -84,107 +97,26 @@ export default function AnalyticsPage() {
   const fetchAnalyticsData = async () => {
     try {
       setLoading(true);
-      const profileRes = await apiClient.get<User>('/users/profile');
+      const profileRes = await apiClient.get<any>('/users/profile');
       if (profileRes.error || !profileRes.data?.messId) {
         setError('Please create or join a mess first');
         return;
       }
 
-      const id = profileRes.data.messId;
-      setMessId(id);
+      const messId = profileRes.data.messId;
 
-      // Fetch mess details for meal rate
-      const messRes = await apiClient.get<any>(`/mess/${id}`);
-      if (messRes.data) {
-        setMealRate(messRes.data.mealRate);
-      }
-
-      // Fetch current month meals
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth() + 1;
-      const mealsRes = await apiClient.get<Meal[]>(
-        `/meals/mess/${id}/month?year=${year}&month=${month}`
-      );
-      if (mealsRes.data) {
-        setMeals(mealsRes.data);
-      }
-
-      // Fetch expenses
-      const expensesRes = await apiClient.get<Expense[]>(`/expenses/mess/${id}`);
-      if (expensesRes.data) {
-        setExpenses(expensesRes.data);
+      // Fetch analytics data from backend
+      const analyticsRes = await apiClient.get<AnalyticsData>(`/analytics/${messId}`);
+      if (analyticsRes.data) {
+        setAnalyticsData(analyticsRes.data);
+      } else {
+        setError('Failed to load analytics data');
       }
     } catch (err) {
       setError('Failed to load analytics data');
     } finally {
       setLoading(false);
     }
-  };
-
-  // Calculate member statistics
-  const calculateMemberStats = (): MemberStats[] => {
-    const memberMap = new Map<string, { name: string; meals: number }>();
-
-    meals.forEach((meal) => {
-      const key = meal.userId._id;
-      const totalMeals = meal.breakfast + meal.lunch + meal.dinner;
-      if (memberMap.has(key)) {
-        const existing = memberMap.get(key)!;
-        memberMap.set(key, {
-          name: existing.name,
-          meals: existing.meals + totalMeals,
-        });
-      } else {
-        memberMap.set(key, {
-          name: meal.userId.name,
-          meals: totalMeals,
-        });
-      }
-    });
-
-    return Array.from(memberMap.values()).map((stat) => ({
-      name: stat.name,
-      meals: stat.meals,
-      cost: stat.meals * mealRate,
-    }));
-  };
-
-  // Calculate category statistics
-  const calculateCategoryStats = (): CategoryStats[] => {
-    const categoryMap = new Map<string, number>();
-
-    expenses.forEach((expense) => {
-      const current = categoryMap.get(expense.category) || 0;
-      categoryMap.set(expense.category, current + expense.amount);
-    });
-
-    return Array.from(categoryMap.entries()).map(([name, value]) => ({
-      name: name.charAt(0).toUpperCase() + name.slice(1),
-      value,
-    }));
-  };
-
-  // Calculate daily meal trends
-  const calculateDailyTrends = () => {
-    const dailyMap = new Map<string, number>();
-
-    meals.forEach((meal) => {
-      const date = new Date(meal.date).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      });
-      const totalMeals = meal.breakfast + meal.lunch + meal.dinner;
-      const current = dailyMap.get(date) || 0;
-      dailyMap.set(date, current + totalMeals);
-    });
-
-    return Array.from(dailyMap.entries())
-      .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
-      .map(([date, meals]) => ({
-        date,
-        meals,
-      }));
   };
 
   if (loading) {
@@ -198,17 +130,18 @@ export default function AnalyticsPage() {
     );
   }
 
-  const memberStats = calculateMemberStats();
-  const categoryStats = calculateCategoryStats();
-  const dailyTrends = calculateDailyTrends();
+  if (!analyticsData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">No analytics data available</p>
+        </div>
+      </div>
+    );
+  }
 
-  const totalMeals = meals.reduce(
-    (sum, meal) => sum + meal.breakfast + meal.lunch + meal.dinner,
-    0
-  );
-  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-  const totalMembers = new Set(meals.map((m) => m.userId._id)).size;
-  const avgMealsPerMember = totalMembers > 0 ? (totalMeals / totalMembers).toFixed(1) : 0;
+  const { summary, memberStats, financialOverview, categoryStats, dailyTrends, calculations } =
+    analyticsData;
 
   return (
     <div className="min-h-screen bg-background">
@@ -224,7 +157,9 @@ export default function AnalyticsPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="mb-8">
               <h2 className="text-3xl font-bold">Analytics</h2>
-              <p className="text-muted-foreground">Detailed insights and statistics</p>
+              <p className="text-muted-foreground">
+                Detailed insights and statistics for {summary.period.month}
+              </p>
             </div>
 
             {error && (
@@ -244,8 +179,10 @@ export default function AnalyticsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{totalMeals}</div>
-                  <p className="text-xs text-muted-foreground mt-1">This month</p>
+                  <div className="text-3xl font-bold">{summary.totalMeals}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {summary.mealEntries} entries
+                  </p>
                 </CardContent>
               </Card>
 
@@ -253,64 +190,131 @@ export default function AnalyticsPage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Total Expenses
-                    <DollarSign className="w-4 h-4 text-secondary" />
+                    <DollarSign className="w-4 h-4 text-red-500" />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">₹{totalExpenses}</div>
+                  <div className="text-3xl font-bold">
+                    ৳{summary.totalExpenses.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {summary.expenseCount} transactions
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium flex items-center justify-between">
+                    Total Deposits
+                    <Wallet className="w-4 h-4 text-green-500" />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">
+                    ৳{summary.totalDeposits.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {summary.depositCount} deposits
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium flex items-center justify-between">
+                    Net Balance
+                    {calculations.netBalance >= 0 ? (
+                      <TrendingUp className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <TrendingDown className="w-4 h-4 text-red-500" />
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div
+                    className={`text-3xl font-bold ${
+                      calculations.netBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
+                    ৳{calculations.netBalance.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {calculations.netBalance >= 0 ? 'Surplus' : 'Deficit'}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Additional Insights */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Avg Meals Per Member</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{calculations.avgMealsPerMember}</div>
                   <p className="text-xs text-muted-foreground mt-1">This month</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Active Members
-                    <Users className="w-4 h-4 text-accent" />
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">Avg Expense Per Member</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{totalMembers}</div>
-                  <p className="text-xs text-muted-foreground mt-1">With meals</p>
+                  <div className="text-2xl font-bold">৳{calculations.avgExpensePerMember}</div>
+                  <p className="text-xs text-muted-foreground mt-1">This month</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Avg Per Member
-                    <TrendingUp className="w-4 h-4 text-green-500" />
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">Current Meal Rate</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{avgMealsPerMember}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Meals per person</p>
+                  <div className="text-2xl font-bold">৳{summary.mealRate}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Per meal</p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Charts */}
+            {/* Charts Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Daily Meal Trends */}
+              {/* Financial Overview - Expenses vs Deposits */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Daily Meal Trends</CardTitle>
-                  <CardDescription>Meals consumed per day</CardDescription>
+                  <CardTitle>Financial Overview</CardTitle>
+                  <CardDescription>Total Expenses vs Total Deposits</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {dailyTrends.length > 0 ? (
+                  {financialOverview.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={dailyTrends}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="meals" stroke="#3b82f6" strokeWidth={2} />
-                      </LineChart>
+                      <PieChart>
+                        <Pie
+                          data={financialOverview}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, value }) => `${name}: ৳${value.toLocaleString()}`}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {financialOverview.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={FINANCIAL_COLORS[index % FINANCIAL_COLORS.length]}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => [`৳${value.toLocaleString()}`, 'Amount']} />
+                        <Legend />
+                      </PieChart>
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-80 flex items-center justify-center text-muted-foreground">
-                      No data available
+                      No financial data available
                     </div>
                   )}
                 </CardContent>
@@ -331,50 +335,100 @@ export default function AnalyticsPage() {
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ name, value }) => `${name}: ₹${value}`}
+                          label={({ name, value }) => `${name}: ৳${value}`}
                           outerRadius={80}
                           fill="#8884d8"
                           dataKey="value"
                         >
                           {categoryStats.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
+                            />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => `₹${value}`} />
+                        <Tooltip formatter={(value) => `৳${value}`} />
+                        <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-80 flex items-center justify-center text-muted-foreground">
-                      No data available
+                      No expense data available
                     </div>
                   )}
                 </CardContent>
               </Card>
             </div>
 
-            {/* Member Statistics */}
-            <Card>
+            {/* Member Statistics - Meal Cost vs Deposits */}
+            <Card className="mb-8">
               <CardHeader>
-                <CardTitle>Member Statistics</CardTitle>
-                <CardDescription>Meals and costs per member</CardDescription>
+                <CardTitle>Member Financial Overview</CardTitle>
+                <CardDescription>Meal Cost vs Total Deposits per member</CardDescription>
               </CardHeader>
               <CardContent>
                 {memberStats.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={400}>
                     <BarChart data={memberStats}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
-                      <YAxis yAxisId="left" />
-                      <YAxis yAxisId="right" orientation="right" />
-                      <Tooltip />
+                      <YAxis />
+                      <Tooltip
+                        formatter={(value, name) => [
+                          `৳${value}`,
+                          name === 'mealCost' ? 'Meal Cost' : 'Total Deposit',
+                        ]}
+                      />
                       <Legend />
-                      <Bar yAxisId="left" dataKey="meals" fill="#3b82f6" name="Meals" />
-                      <Bar yAxisId="right" dataKey="cost" fill="#8b5cf6" name="Cost (₹)" />
+                      <Bar
+                        dataKey="mealCost"
+                        fill="#ef4444"
+                        name="Meal Cost"
+                        radius={[4, 4, 0, 0]}
+                      />
+                      <Bar
+                        dataKey="totalDeposit"
+                        fill="#10b981"
+                        name="Total Deposit"
+                        radius={[4, 4, 0, 0]}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
                   <div className="h-80 flex items-center justify-center text-muted-foreground">
-                    No data available
+                    No member data available
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Daily Meal Trends */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Daily Meal Trends</CardTitle>
+                <CardDescription>Meals consumed per day</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {dailyTrends.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={dailyTrends}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="meals"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
+                        name="Meals"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-80 flex items-center justify-center text-muted-foreground">
+                    No meal data available
                   </div>
                 )}
               </CardContent>
