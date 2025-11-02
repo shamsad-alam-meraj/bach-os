@@ -43,8 +43,8 @@ export default function PWAInstaller() {
         <div className="flex items-start gap-3">
           <Download className="w-5 h-5 mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="font-semibold">Install App</h3>
-            <p className="text-sm opacity-90">Install Meal System for quick access</p>
+            <h3 className="font-semibold">Install bachOS</h3>
+            <p className="text-sm opacity-90">Install bachOS for quick access</p>
           </div>
         </div>
         <button
