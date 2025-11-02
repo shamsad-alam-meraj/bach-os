@@ -34,7 +34,11 @@ export default function MealsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [messId, setMessId] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState('');
+  // Initialize date after component mounts
+  useEffect(() => {
+    setSelectedDate(new Date().toISOString().split('T')[0]);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');

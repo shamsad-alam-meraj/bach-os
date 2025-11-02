@@ -49,8 +49,16 @@ export default function AddExpensePage() {
     amount: '',
     category: 'food',
     expensedBy: '',
-    date: new Date().toISOString().split('T')[0],
+    date: '',
   });
+
+  // Initialize date after component mounts
+    useEffect(() => {
+      setFormData((prev) => ({
+        ...prev,
+        date: new Date().toISOString().split('T')[0],
+      }));
+    }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
