@@ -5,6 +5,7 @@ import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { BASE_URL } from '@/utils/baseUrl';
 import { motion } from 'framer-motion';
 import { AlertCircle, LogIn } from 'lucide-react';
 import Link from 'next/link';
@@ -24,7 +25,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/api/auth/login', {
+      const response = await fetch(`${BASE_URL}api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
