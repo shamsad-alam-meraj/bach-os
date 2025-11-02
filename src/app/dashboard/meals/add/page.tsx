@@ -51,9 +51,15 @@ export default function AddMealPage() {
     breakfast: 0,
     lunch: 0,
     dinner: 0,
-    date: new Date().toISOString().split('T')[0],
+    date: '',
   });
-
+  // Initialize date after component mounts
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      date: new Date().toISOString().split('T')[0],
+    }));
+  }, []);
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
