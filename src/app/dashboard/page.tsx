@@ -174,7 +174,7 @@ export default function DashboardPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="mb-8">
                 <h2 className="text-3xl font-bold mb-2">{mess.name}</h2>
-                <p className="text-muted-foreground">Meal rate: ₹{mess.mealRate} per meal</p>
+                <p className="text-muted-foreground">Meal rate: ৳{mess.mealRate} per meal</p>
               </div>
 
               {/* Stats Grid */}
@@ -193,13 +193,13 @@ export default function DashboardPage() {
                 />
                 <StatCard
                   title="Total Expenses"
-                  value={`₹${totalExpenses}`}
+                  value={`৳${totalExpenses}`}
                   description="This month"
                   icon={<DollarSign className="w-5 h-5" />}
                 />
                 <StatCard
                   title="Avg Per Member"
-                  value={`₹${avgPerMember}`}
+                  value={`৳${avgPerMember}`}
                   description="Per month"
                   icon={<TrendingUp className="w-5 h-5" />}
                 />
@@ -279,7 +279,7 @@ export default function DashboardPage() {
                                 {expense.addedBy.name}
                               </p>
                             </div>
-                            <p className="font-semibold">₹{expense.amount}</p>
+                            <p className="font-semibold">৳{expense.amount}</p>
                           </div>
                         ))}
                       </div>
