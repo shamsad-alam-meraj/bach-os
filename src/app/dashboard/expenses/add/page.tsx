@@ -7,6 +7,7 @@ import DashboardSidebar from '@/components/dashboard-sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -28,6 +29,12 @@ interface User {
   messId: string;
 }
 
+interface Mess {
+  _id: string;
+  name: string;
+  members: User[];
+}
+
 export default function AddExpensePage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,10 +42,14 @@ export default function AddExpensePage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [messId, setMessId] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
+  const [members, setMembers] = useState<User[]>([]);
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
     category: 'food',
+    expensedBy: '',
+    date: new Date().toISOString().split('T')[0],
   });
 
   useEffect(() => {
@@ -58,7 +69,21 @@ export default function AddExpensePage() {
         return;
       }
 
-      setMessId(profileRes.data.messId);
+      const userData = profileRes.data;
+      setMessId(userData.messId);
+      setCurrentUserId(userData._id);
+
+      // Set current user as default expensedBy
+      setFormData((prev) => ({
+        ...prev,
+        expensedBy: userData._id,
+      }));
+
+      // Fetch mess details to get members
+      const messRes = await apiClient.get<Mess>(`/mess/${userData.messId}`);
+      if (messRes.data) {
+        setMembers(messRes.data.members);
+      }
     } catch (err) {
       setError('Failed to load user data');
     } finally {
@@ -74,14 +99,21 @@ export default function AddExpensePage() {
     }));
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSubmitting(true);
 
     try {
-      if (!formData.description || !formData.amount) {
-        setError('Please fill in all fields');
+      if (!formData.description || !formData.amount || !formData.expensedBy) {
+        setError('Please fill in all required fields');
         setSubmitting(false);
         return;
       }
@@ -91,6 +123,8 @@ export default function AddExpensePage() {
         description: formData.description,
         amount: Number.parseFloat(formData.amount),
         category: formData.category,
+        expensedBy: formData.expensedBy,
+        date: formData.date,
       });
 
       if (res.error) {
@@ -157,9 +191,7 @@ export default function AddExpensePage() {
                   )}
 
                   <div className="space-y-2">
-                    <label htmlFor="description" className="text-sm font-medium">
-                      Description
-                    </label>
+                    <Label htmlFor="description">Description</Label>
                     <Input
                       id="description"
                       name="description"
@@ -171,44 +203,74 @@ export default function AddExpensePage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="amount" className="text-sm font-medium">
-                      Amount (₹)
-                    </label>
-                    <Input
-                      id="amount"
-                      name="amount"
-                      type="number"
-                      placeholder="0.00"
-                      step="0.01"
-                      min="0"
-                      value={formData.amount}
-                      onChange={handleChange}
-                      required
-                      disabled={submitting}
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="amount">Amount (৳)</Label>
+                      <Input
+                        id="amount"
+                        name="amount"
+                        type="number"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                        value={formData.amount}
+                        onChange={handleChange}
+                        required
+                        disabled={submitting}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="date">Date</Label>
+                      <Input
+                        id="date"
+                        name="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={handleChange}
+                        required
+                        disabled={submitting}
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="category" className="text-sm font-medium">
-                      Category
-                    </label>
-                    <Select
-                      value={formData.category}
-                      onValueChange={(value) =>
-                        setFormData((prev) => ({ ...prev, category: value }))
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="food">Food</SelectItem>
-                        <SelectItem value="utilities">Utilities</SelectItem>
-                        <SelectItem value="maintenance">Maintenance</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Category</Label>
+                      <Select
+                        value={formData.category}
+                        onValueChange={(value) => handleSelectChange('category', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="food">Food & Groceries</SelectItem>
+                          <SelectItem value="utilities">Utilities</SelectItem>
+                          <SelectItem value="maintenance">Maintenance</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="expensedBy">Expensed By</Label>
+                      <Select
+                        value={formData.expensedBy}
+                        onValueChange={(value) => handleSelectChange('expensedBy', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select member" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {members.map((member) => (
+                            <SelectItem key={member._id} value={member._id}>
+                              {member.name} {member._id === currentUserId && '(You)'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   <div className="flex gap-4">

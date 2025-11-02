@@ -9,6 +9,7 @@ import {
   Settings,
   Users,
   UtensilsCrossed,
+  Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,6 +23,7 @@ const menuItems = [
   { href: '/dashboard/members', label: 'Members', icon: Users },
   { href: '/dashboard/meals', label: 'Meals', icon: UtensilsCrossed },
   { href: '/dashboard/expenses', label: 'Expenses', icon: DollarSign },
+  { href: '/dashboard/deposits', label: 'Deposits', icon: Wallet },
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/dashboard/reports', label: 'Reports', icon: FileText },
   { href: '/dashboard/profile', label: 'Profile', icon: Settings },

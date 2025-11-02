@@ -21,7 +21,7 @@ export default function DashboardHeader({ sidebarOpen, onToggleSidebar }: Dashbo
     <header className="glass-header border-b border-white/10 dark:border-white/5">
       <div className="flex items-center justify-between px-4 py-4 md:px-6">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-300 dark:to-blue-300 bg-clip-text text-transparent">
-          Meal System
+          bachOS
         </h1>
         <div className="flex items-center gap-4">
           <Button

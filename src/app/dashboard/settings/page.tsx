@@ -7,6 +7,14 @@ import DashboardSidebar from '@/components/dashboard-sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { apiClient } from '@/lib/api-client';
 import { motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
@@ -17,6 +25,7 @@ interface User {
   _id: string;
   name: string;
   email: string;
+  role: string;
   messId?: string;
 }
 
@@ -24,6 +33,9 @@ interface Mess {
   _id: string;
   name: string;
   description?: string;
+  address?: string;
+  managerId: User;
+  members: User[];
   mealRate: number;
 }
 
@@ -36,11 +48,13 @@ export default function SettingsPage() {
   const [success, setSuccess] = useState('');
   const [user, setUser] = useState<User | null>(null);
   const [mess, setMess] = useState<Mess | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [hasMessCreated, setHasMessCreated] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    mealRate: '50',
+    address: '',
+    managerId: '',
   });
 
   useEffect(() => {
@@ -64,6 +78,14 @@ export default function SettingsPage() {
       if (profileRes.data) {
         setUser(profileRes.data);
 
+        // Fetch all users for manager selection (only for admins)
+        if (profileRes.data.role === 'admin') {
+          const usersRes = await apiClient.get<User[]>('/users/all');
+          if (usersRes.data) {
+            setUsers(usersRes.data);
+          }
+        }
+
         if (profileRes.data.messId) {
           setHasMessCreated(true);
           const messRes = await apiClient.get<Mess>(`/mess/${profileRes.data.messId}`);
@@ -72,7 +94,8 @@ export default function SettingsPage() {
             setFormData({
               name: messRes.data.name,
               description: messRes.data.description || '',
-              mealRate: messRes.data.mealRate.toString(),
+              address: messRes.data.address || '',
+              managerId: messRes.data.managerId._id,
             });
           }
         }
@@ -92,6 +115,13 @@ export default function SettingsPage() {
     }));
   };
 
+  const handleManagerChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      managerId: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -105,10 +135,17 @@ export default function SettingsPage() {
         return;
       }
 
+      if (!formData.managerId) {
+        setError('Please select a manager');
+        setSubmitting(false);
+        return;
+      }
+
       const res = await apiClient.post<Mess>('/mess/create', {
         name: formData.name,
         description: formData.description,
-        mealRate: Number.parseInt(formData.mealRate),
+        address: formData.address,
+        managerId: formData.managerId,
       });
 
       if (res.error) {
@@ -178,68 +215,106 @@ export default function SettingsPage() {
             )}
 
             {!hasMessCreated ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Create Mess</CardTitle>
-                  <CardDescription>Set up your first mess to get started</CardDescription>
-                </CardHeader>
+              user?.role === 'admin' ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Create Mess</CardTitle>
+                    <CardDescription>Set up a new mess with manager and details</CardDescription>
+                  </CardHeader>
 
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <label htmlFor="name" className="text-sm font-medium">
-                        Mess Name
-                      </label>
-                      <Input
-                        id="name"
-                        name="name"
-                        placeholder="e.g., Bachelor Pad, Shared House"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        disabled={submitting}
-                      />
+                  <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Mess Name</Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          placeholder="e.g., Bachelor Pad, Shared House"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                          disabled={submitting}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="description">Description (Optional)</Label>
+                        <textarea
+                          id="description"
+                          name="description"
+                          placeholder="Describe your mess..."
+                          value={formData.description}
+                          onChange={handleChange}
+                          disabled={submitting}
+                          className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="address">Address (Optional)</Label>
+                        <textarea
+                          id="address"
+                          name="address"
+                          placeholder="Enter mess address..."
+                          value={formData.address}
+                          onChange={handleChange}
+                          disabled={submitting}
+                          className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          rows={2}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="manager">Select Manager</Label>
+                        <Select value={formData.managerId} onValueChange={handleManagerChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a manager" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {users.map((user) => (
+                              <SelectItem key={user._id} value={user._id}>
+                                {user.name} ({user.email})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          Select a user to be the manager of this mess
+                        </p>
+                      </div>
+
+                      <Button type="submit" disabled={submitting} className="w-full">
+                        {submitting ? 'Creating...' : 'Create Mess'}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Join a Mess</CardTitle>
+                    <CardDescription>You need to be added to a mess by a manager</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Only admins can create new messes. Please contact your mess manager and ask
+                        them to add you using your email:
+                      </p>
+                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-sm font-medium text-blue-800">
+                          Your Email: <strong>{user?.email}</strong>
+                        </p>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Once a manager adds you to their mess, you'll be able to access all the
+                        features.
+                      </p>
                     </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="description" className="text-sm font-medium">
-                        Description (Optional)
-                      </label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        placeholder="Describe your mess..."
-                        value={formData.description}
-                        onChange={handleChange}
-                        disabled={submitting}
-                        className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                        rows={4}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label htmlFor="mealRate" className="text-sm font-medium">
-                        Meal Rate (৳)
-                      </label>
-                      <Input
-                        id="mealRate"
-                        name="mealRate"
-                        type="number"
-                        min="1"
-                        value={formData.mealRate}
-                        onChange={handleChange}
-                        required
-                        disabled={submitting}
-                      />
-                      <p className="text-xs text-muted-foreground">Cost per meal in taka</p>
-                    </div>
-
-                    <Button type="submit" disabled={submitting} className="w-full">
-                      {submitting ? 'Creating...' : 'Create Mess'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )
             ) : (
               <Card>
                 <CardHeader>
@@ -262,9 +337,25 @@ export default function SettingsPage() {
                         </div>
                       )}
 
+                      {mess.address && (
+                        <div className="p-4 bg-surface rounded-lg">
+                          <p className="text-sm text-muted-foreground">Address</p>
+                          <p className="text-lg">{mess.address}</p>
+                        </div>
+                      )}
+
                       <div className="p-4 bg-surface rounded-lg">
-                        <p className="text-sm text-muted-foreground">Meal Rate</p>
+                        <p className="text-sm text-muted-foreground">Manager</p>
+                        <p className="text-lg font-semibold">{mess.managerId.name}</p>
+                        <p className="text-sm text-muted-foreground">{mess.managerId.email}</p>
+                      </div>
+
+                      <div className="p-4 bg-surface rounded-lg">
+                        <p className="text-sm text-muted-foreground">Current Meal Rate</p>
                         <p className="text-lg font-semibold">৳{mess.mealRate} per meal</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          * Meal rate is calculated dynamically based on total expenses and meals
+                        </p>
                       </div>
 
                       <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">

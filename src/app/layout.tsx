@@ -9,13 +9,14 @@ const geistSans = Geist({ subsets: ['latin'] });
 const geistMono = Geist_Mono({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Meal System Management',
+  title: 'bachOS',
   description: 'Bachelor meal system management with PWA support',
+  authors: [{ name: 'Md. Shamsad Alam Meraj' }],
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Meal System',
+    title: 'bachOS',
   },
   formatDetection: {
     telephone: false,
