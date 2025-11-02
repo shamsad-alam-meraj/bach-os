@@ -269,10 +269,7 @@ export default function ReportsPage() {
             <Card className="glass-card mb-6">
               <CardHeader>
                 <CardTitle>Member Settlement Report</CardTitle>
-                <CardDescription>
-                  Balance = Total Deposit - (Meal Cost + Expense Share of ৳
-                  {calculations.expensePerMember})
-                </CardDescription>
+                <CardDescription>Balance = Total Deposit - Meal Cost</CardDescription>
               </CardHeader>
               <CardContent>
                 {memberReports.length === 0 ? (
@@ -291,7 +288,10 @@ export default function ReportsPage() {
                       </thead>
                       <tbody>
                         {memberReports.map((report, idx) => (
-                          <tr key={idx} className="border-b border-white/10 dark:border-white/5 hover:bg-white/5">
+                          <tr
+                            key={idx}
+                            className="border-b border-white/10 dark:border-white/5 hover:bg-white/5"
+                          >
                             <td className="py-3 px-4">
                               <div>
                                 <p className="font-medium">{report.name}</p>
