@@ -7,6 +7,14 @@ import DashboardSidebar from '@/components/dashboard-sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { apiClient } from '@/lib/api-client';
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
@@ -21,6 +29,13 @@ interface User {
   messId: string;
 }
 
+interface Mess {
+  _id: string;
+  name: string;
+  members: User[];
+  managerId: User;
+}
+
 export default function AddMealPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -28,7 +43,10 @@ export default function AddMealPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [messId, setMessId] = useState('');
-  const [userId, setUserId] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
+  const [isManager, setIsManager] = useState(false);
+  const [members, setMembers] = useState<User[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState('');
   const [formData, setFormData] = useState({
     breakfast: 0,
     lunch: 0,
@@ -54,7 +72,17 @@ export default function AddMealPage() {
       }
 
       setMessId(profileRes.data.messId);
-      setUserId(profileRes.data._id);
+      setCurrentUserId(profileRes.data._id);
+
+      // Set default selected user to current user
+      setSelectedUserId(profileRes.data._id);
+
+      // Fetch mess details to get members and check if current user is manager
+      const messRes = await apiClient.get<Mess>(`/mess/${profileRes.data.messId}`);
+      if (messRes.data) {
+        setMembers(messRes.data.members);
+        setIsManager(messRes.data.managerId._id === profileRes.data._id);
+      }
     } catch (err) {
       setError('Failed to load user data');
     } finally {
@@ -76,9 +104,12 @@ export default function AddMealPage() {
     setSubmitting(true);
 
     try {
+      // Use selected user ID if manager selected someone else, otherwise use current user ID
+      const userIdToUse = isManager && selectedUserId ? selectedUserId : currentUserId;
+
       const res = await apiClient.post('/meals', {
         messId,
-        userId,
+        userId: userIdToUse,
         breakfast: formData.breakfast,
         lunch: formData.lunch,
         dinner: formData.dinner,
@@ -136,7 +167,11 @@ export default function AddMealPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Add Meal Entry</CardTitle>
-                <CardDescription>Record meal consumption for today</CardDescription>
+                <CardDescription>
+                  {isManager
+                    ? 'Record meal consumption for yourself or other members'
+                    : 'Record your meal consumption for today'}
+                </CardDescription>
               </CardHeader>
 
               <CardContent>
@@ -148,10 +183,27 @@ export default function AddMealPage() {
                     </div>
                   )}
 
+                  {/* Member Selection - Only show for managers */}
+                  {isManager && (
+                    <div className="space-y-2">
+                      <Label htmlFor="member">Select Member</Label>
+                      <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a member" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {members.map((member) => (
+                            <SelectItem key={member._id} value={member._id}>
+                              {member.name} {member._id === currentUserId && '(You)'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
-                    <label htmlFor="date" className="text-sm font-medium">
-                      Date
-                    </label>
+                    <Label htmlFor="date">Date</Label>
                     <Input
                       id="date"
                       name="date"
@@ -165,9 +217,7 @@ export default function AddMealPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <label htmlFor="breakfast" className="text-sm font-medium">
-                        Breakfast
-                      </label>
+                      <Label htmlFor="breakfast">Breakfast</Label>
                       <Input
                         id="breakfast"
                         name="breakfast"
@@ -180,9 +230,7 @@ export default function AddMealPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label htmlFor="lunch" className="text-sm font-medium">
-                        Lunch
-                      </label>
+                      <Label htmlFor="lunch">Lunch</Label>
                       <Input
                         id="lunch"
                         name="lunch"
@@ -195,9 +243,7 @@ export default function AddMealPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label htmlFor="dinner" className="text-sm font-medium">
-                        Dinner
-                      </label>
+                      <Label htmlFor="dinner">Dinner</Label>
                       <Input
                         id="dinner"
                         name="dinner"
@@ -215,6 +261,11 @@ export default function AddMealPage() {
                     <p className="text-3xl font-bold">
                       {formData.breakfast + formData.lunch + formData.dinner}
                     </p>
+                    {isManager && selectedUserId && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        For: {members.find((m) => m._id === selectedUserId)?.name}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex gap-4">

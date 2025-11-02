@@ -47,7 +47,7 @@ export default function Home() {
         </div>
 
         <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 dark:from-purple-300 dark:via-blue-300 dark:to-pink-300 bg-clip-text text-transparent">
-          Meal System Management
+          bachOS
         </h1>
 
         <p className="text-lg md:text-xl text-foreground/80 mb-12 leading-relaxed">
@@ -87,7 +87,7 @@ export default function Home() {
               className="glass-button bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 flex items-center gap-2 justify-center w-full sm:w-auto"
             >
               <LogIn className="w-5 h-5" />
-              Get Started
+              Log In
             </motion.button>
           </Link>
 
