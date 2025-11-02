@@ -199,7 +199,7 @@ export default function DashboardPage() {
 
         <main className="flex-1 p-4 md:p-6">
           {error && (
-            <div className="mb-6 p-4 bg-destructive/10 text-destructive rounded-lg">{error}</div>
+            <div className="mb-6 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">{error}</div>
           )}
 
           {!mess ? (
@@ -208,7 +208,7 @@ export default function DashboardPage() {
               animate={{ opacity: 1, y: 0 }}
               className="max-w-md mx-auto mt-12"
             >
-              <Card>
+              <Card className="glass-card">
                 <CardHeader>
                   <CardTitle>Welcome to Meal System</CardTitle>
                   <CardDescription>
@@ -235,8 +235,8 @@ export default function DashboardPage() {
                         manager and ask them to add you using your email:{' '}
                         <strong>{user?.email}</strong>
                       </p>
-                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-800">
+                      <div className="p-4 glass-light bg-blue-50/50 dark:bg-blue-900/20 border border-blue-200/50 dark:border-blue-700/50 rounded-lg">
+                        <p className="text-sm text-blue-800 dark:text-blue-200">
                           <strong>Note:</strong> Only admins can create new messes. Regular users
                           need to be invited by an existing mess manager.
                         </p>
@@ -303,7 +303,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Meal Rate Calculation Card */}
-              <Card className="mb-6">
+              <Card className="glass-card mb-6">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="w-5 h-5" />
@@ -315,24 +315,24 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <p className="font-semibold text-blue-800">Total Expenses</p>
-                      <p className="text-2xl font-bold text-blue-600">
+                    <div className="text-center p-4 glass-light bg-blue-50/50 dark:bg-blue-900/20 rounded-lg">
+                      <p className="font-semibold text-blue-800 dark:text-blue-200">Total Expenses</p>
+                      <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                         ৳{calculationBreakdown?.totalExpenses.toLocaleString()}
                       </p>
                     </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <p className="font-semibold text-green-800">Total Meals</p>
-                      <p className="text-2xl font-bold text-green-600">
+                    <div className="text-center p-4 glass-light bg-green-50/50 dark:bg-green-900/20 rounded-lg">
+                      <p className="font-semibold text-green-800 dark:text-green-200">Total Meals</p>
+                      <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                         {calculationBreakdown?.totalMeals}
                       </p>
                     </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <p className="font-semibold text-purple-800">Meal Rate</p>
-                      <p className="text-2xl font-bold text-purple-600">
+                    <div className="text-center p-4 glass-light bg-purple-50/50 dark:bg-purple-900/20 rounded-lg">
+                      <p className="font-semibold text-purple-800 dark:text-purple-200">Meal Rate</p>
+                      <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                         ৳{calculationBreakdown?.mealRate}
                       </p>
-                      <p className="text-xs text-purple-600 mt-1">
+                      <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
                         {calculationBreakdown?.formula}
                       </p>
                     </div>
@@ -343,7 +343,7 @@ export default function DashboardPage() {
               {/* Additional Insights Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 {/* Member Meal Statistics */}
-                <Card>
+                <Card className="glass-card">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <BarChart3 className="w-5 h-5" />
@@ -361,7 +361,7 @@ export default function DashboardPage() {
                         {memberStats.slice(0, 5).map((member) => (
                           <div
                             key={member.userId}
-                            className="flex items-center justify-between p-3 bg-surface rounded-lg"
+                            className="flex items-center justify-between p-3 glass-light rounded-lg"
                           >
                             <div>
                               <p className="font-medium">{member.userName}</p>
@@ -383,7 +383,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Expense Breakdown */}
-                <Card>
+                <Card className="glass-card">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <PieChart className="w-5 h-5" />
@@ -401,7 +401,7 @@ export default function DashboardPage() {
                         {expenseBreakdown.slice(0, 5).map((category) => (
                           <div
                             key={category._id}
-                            className="flex items-center justify-between p-3 bg-surface rounded-lg"
+                            className="flex items-center justify-between p-3 glass-light rounded-lg"
                           >
                             <div>
                               <p className="font-medium capitalize">{category._id}</p>
@@ -420,7 +420,7 @@ export default function DashboardPage() {
 
               {/* Recent Activity Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
+                <Card className="glass-card">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                       <CardTitle>Recent Meals</CardTitle>
@@ -442,7 +442,7 @@ export default function DashboardPage() {
                         {recentMeals.slice(0, 5).map((meal) => (
                           <div
                             key={meal._id}
-                            className="flex items-center justify-between p-3 bg-surface rounded-lg"
+                            className="flex items-center justify-between p-3 glass-light rounded-lg"
                           >
                             <div>
                               <p className="font-medium">{meal.userId.name}</p>
@@ -465,7 +465,7 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="glass-card">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                       <CardTitle>Recent Expenses</CardTitle>
@@ -487,7 +487,7 @@ export default function DashboardPage() {
                         {recentExpenses.slice(0, 5).map((expense) => (
                           <div
                             key={expense._id}
-                            className="flex items-center justify-between p-3 bg-surface rounded-lg"
+                            className="flex items-center justify-between p-3 glass-light rounded-lg"
                           >
                             <div className="flex-1">
                               <p className="font-medium">{expense.description}</p>

@@ -115,13 +115,13 @@ export default function ExpensesPage() {
             </div>
 
             {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
             )}
 
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Expense Records</CardTitle>
                 <CardDescription>All expenses for this mess</CardDescription>
@@ -139,7 +139,7 @@ export default function ExpensesPage() {
                     {expenses.map((expense) => (
                       <div
                         key={expense._id}
-                        className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border"
+                        className="flex items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10"
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">

@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
             </div>
 
             {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
@@ -171,7 +171,7 @@ export default function AnalyticsPage() {
 
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Total Meals
@@ -186,7 +186,7 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Total Expenses
@@ -203,7 +203,7 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Total Deposits
@@ -220,7 +220,7 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Net Balance
@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
 
             {/* Additional Insights */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium">Avg Meals Per Member</CardTitle>
                 </CardHeader>
@@ -258,7 +258,7 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium">Avg Expense Per Member</CardTitle>
                 </CardHeader>
@@ -268,7 +268,7 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium">Current Meal Rate</CardTitle>
                 </CardHeader>
@@ -282,7 +282,7 @@ export default function AnalyticsPage() {
             {/* Charts Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Financial Overview - Expenses vs Deposits */}
-              <Card>
+              <Card className="glass-card">
                 <CardHeader>
                   <CardTitle>Financial Overview</CardTitle>
                   <CardDescription>Total Expenses vs Total Deposits</CardDescription>
@@ -321,7 +321,7 @@ export default function AnalyticsPage() {
               </Card>
 
               {/* Expense Categories */}
-              <Card>
+              <Card className="glass-card">
                 <CardHeader>
                   <CardTitle>Expense Breakdown</CardTitle>
                   <CardDescription>By category</CardDescription>
@@ -361,7 +361,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Member Statistics - Meal Cost vs Deposits */}
-            <Card className="mb-8">
+            <Card className="glass-card mb-8">
               <CardHeader>
                 <CardTitle>Member Financial Overview</CardTitle>
                 <CardDescription>Meal Cost vs Total Deposits per member</CardDescription>
@@ -403,7 +403,7 @@ export default function AnalyticsPage() {
             </Card>
 
             {/* Daily Meal Trends */}
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Daily Meal Trends</CardTitle>
                 <CardDescription>Meals consumed per day</CardDescription>
