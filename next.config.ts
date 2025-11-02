@@ -1,30 +1,17 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // React Compiler configuration
-  reactCompiler: {
-    compilationMode: 'annotation',
+  // Explicitly disable React Compiler - moved to top level in Next.js 16
+  reactCompiler: false,
+  
+  // Disable experimental features that might trigger compiler
+  experimental: {
+    // Ensure no experimental compiler features are enabled
   },
-
-  // Cache components for better performance
-  cacheComponents: true,
 
   // TypeScript configuration
   typescript: {
     ignoreBuildErrors: process.env.NODE_ENV === 'production',
-  },
-
-  // Images configuration
-  images: {
-    unoptimized: process.env.NODE_ENV === 'development',
-  },
-
-  // Turbopack configuration
-  turbopack: {
-    // Resolve aliases for Turbopack
-    resolveAlias: {
-      '@': './',
-    },
   },
 
   // Headers configuration
@@ -53,11 +40,6 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
-  },
-
-  // Compiler options
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
   },
 };
 

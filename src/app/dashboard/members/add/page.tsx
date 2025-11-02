@@ -123,7 +123,7 @@ export default function AddMemberPage() {
               Back to Members
             </Link>
 
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Add Member</CardTitle>
                 <CardDescription>Invite a user to join this mess by their email</CardDescription>
@@ -132,14 +132,14 @@ export default function AddMemberPage() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {error && (
-                    <div className="flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+                    <div className="flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                       <AlertCircle className="w-5 h-5 flex-shrink-0" />
                       {error}
                     </div>
                   )}
 
                   {success && (
-                    <div className="flex items-center gap-2 p-4 bg-green-100 text-green-800 rounded-lg">
+                    <div className="flex items-center gap-2 p-4 glass-light bg-green-100/50 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded-lg">
                       <AlertCircle className="w-5 h-5 flex-shrink-0" />
                       {success}
                     </div>

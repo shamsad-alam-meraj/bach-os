@@ -201,14 +201,14 @@ export default function SettingsPage() {
             </div>
 
             {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-green-100 text-green-800 rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-green-100/50 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {success}
               </div>
@@ -216,7 +216,7 @@ export default function SettingsPage() {
 
             {!hasMessCreated ? (
               user?.role === 'admin' ? (
-                <Card>
+                <Card className="glass-card">
                   <CardHeader>
                     <CardTitle>Create Mess</CardTitle>
                     <CardDescription>Set up a new mess with manager and details</CardDescription>
@@ -291,7 +291,7 @@ export default function SettingsPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <Card>
+                <Card className="glass-card">
                   <CardHeader>
                     <CardTitle>Join a Mess</CardTitle>
                     <CardDescription>You need to be added to a mess by a manager</CardDescription>
@@ -302,8 +302,8 @@ export default function SettingsPage() {
                         Only admins can create new messes. Please contact your mess manager and ask
                         them to add you using your email:
                       </p>
-                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm font-medium text-blue-800">
+                      <div className="p-4 glass-light bg-blue-50/50 dark:bg-blue-900/20 border border-blue-200/50 dark:border-blue-700/50 rounded-lg">
+                        <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
                           Your Email: <strong>{user?.email}</strong>
                         </p>
                       </div>
@@ -316,7 +316,7 @@ export default function SettingsPage() {
                 </Card>
               )
             ) : (
-              <Card>
+              <Card className="glass-card">
                 <CardHeader>
                   <CardTitle>Mess Information</CardTitle>
                   <CardDescription>Your current mess details</CardDescription>
@@ -325,32 +325,32 @@ export default function SettingsPage() {
                 <CardContent>
                   {mess && (
                     <div className="space-y-4">
-                      <div className="p-4 bg-surface rounded-lg">
+                        <div className="p-4 glass-light rounded-lg">
                         <p className="text-sm text-muted-foreground">Mess Name</p>
                         <p className="text-lg font-semibold">{mess.name}</p>
                       </div>
 
                       {mess.description && (
-                        <div className="p-4 bg-surface rounded-lg">
+                        <div className="p-4 glass-light rounded-lg">
                           <p className="text-sm text-muted-foreground">Description</p>
                           <p className="text-lg">{mess.description}</p>
                         </div>
                       )}
 
                       {mess.address && (
-                        <div className="p-4 bg-surface rounded-lg">
+                      <div className="p-4 glass-light rounded-lg">
                           <p className="text-sm text-muted-foreground">Address</p>
                           <p className="text-lg">{mess.address}</p>
                         </div>
                       )}
 
-                      <div className="p-4 bg-surface rounded-lg">
+                      <div className="p-4 glass-light rounded-lg">
                         <p className="text-sm text-muted-foreground">Manager</p>
                         <p className="text-lg font-semibold">{mess.managerId.name}</p>
                         <p className="text-sm text-muted-foreground">{mess.managerId.email}</p>
                       </div>
 
-                      <div className="p-4 bg-surface rounded-lg">
+                      <div className="p-4 glass-light rounded-lg">
                         <p className="text-sm text-muted-foreground">Current Meal Rate</p>
                         <p className="text-lg font-semibold">৳{mess.mealRate} per meal</p>
                         <p className="text-xs text-muted-foreground mt-1">
@@ -358,7 +358,7 @@ export default function SettingsPage() {
                         </p>
                       </div>
 
-                      <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
+                      <div className="p-4 glass-light bg-primary/10 rounded-lg border border-primary/20">
                         <p className="text-sm text-muted-foreground mb-2">Manage Members</p>
                         <p className="text-sm mb-4">
                           Go to the Members section to add or manage members in your mess.

@@ -194,7 +194,7 @@ export default function ReportsPage() {
             </div>
 
             {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
@@ -202,7 +202,7 @@ export default function ReportsPage() {
 
             {/* Summary */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Total Meals
@@ -217,7 +217,7 @@ export default function ReportsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Total Expenses
@@ -234,7 +234,7 @@ export default function ReportsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Total Deposits
@@ -251,7 +251,7 @@ export default function ReportsPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
                     Meal Rate
@@ -266,7 +266,7 @@ export default function ReportsPage() {
             </div>
 
             {/* Settlement Report */}
-            <Card className="mb-6">
+            <Card className="glass-card mb-6">
               <CardHeader>
                 <CardTitle>Member Settlement Report</CardTitle>
                 <CardDescription>
@@ -291,7 +291,7 @@ export default function ReportsPage() {
                       </thead>
                       <tbody>
                         {memberReports.map((report, idx) => (
-                          <tr key={idx} className="border-b border-border hover:bg-surface/50">
+                          <tr key={idx} className="border-b border-white/10 dark:border-white/5 hover:bg-white/5">
                             <td className="py-3 px-4">
                               <div>
                                 <p className="font-medium">{report.name}</p>
@@ -332,7 +332,7 @@ export default function ReportsPage() {
             </Card>
 
             {/* Expense Details */}
-            <Card className="mb-6">
+            <Card className="glass-card mb-6">
               <CardHeader>
                 <CardTitle>Expense Details</CardTitle>
                 <CardDescription>
@@ -361,7 +361,7 @@ export default function ReportsPage() {
                         {detailedExpenses.map((expense) => (
                           <tr
                             key={expense._id}
-                            className="border-b border-border hover:bg-surface/50"
+                            className="border-b border-white/10 dark:border-white/5 hover:bg-white/5"
                           >
                             <td className="py-3 px-4">{expense.description}</td>
                             <td className="py-3 px-4 capitalize">{expense.category}</td>
@@ -383,7 +383,7 @@ export default function ReportsPage() {
             </Card>
 
             {/* Deposit Details */}
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Deposit Details</CardTitle>
                 <CardDescription>All member deposits</CardDescription>
@@ -408,7 +408,7 @@ export default function ReportsPage() {
                         {detailedDeposits.map((deposit) => (
                           <tr
                             key={deposit._id}
-                            className="border-b border-border hover:bg-surface/50"
+                            className="border-b border-white/10 dark:border-white/5 hover:bg-white/5"
                           >
                             <td className="py-3 px-4">
                               <div>

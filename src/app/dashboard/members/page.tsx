@@ -106,7 +106,7 @@ export default function MembersPage() {
             </div>
 
             {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
@@ -114,7 +114,7 @@ export default function MembersPage() {
 
             {mess && (
               <div className="space-y-6">
-                <Card>
+                <Card className="glass-card">
                   <CardHeader>
                     <CardTitle>Mess Information</CardTitle>
                   </CardHeader>
@@ -136,7 +136,7 @@ export default function MembersPage() {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="glass-card">
                   <CardHeader>
                     <CardTitle>Members List</CardTitle>
                     <CardDescription>All members in this mess</CardDescription>
@@ -146,7 +146,7 @@ export default function MembersPage() {
                       {mess.members.map((member) => (
                         <div
                           key={member._id}
-                          className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border"
+                          className="flex items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10"
                         >
                           <div className="flex-1">
                             <h3 className="font-semibold">{member.name}</h3>

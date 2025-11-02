@@ -144,14 +144,14 @@ export default function ProfilePage() {
             </div>
 
             {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-green-100 text-green-800 rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-green-100/50 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {success}
               </div>
@@ -159,7 +159,7 @@ export default function ProfilePage() {
 
             {user && (
               <div className="space-y-6">
-                <Card>
+                <Card className="glass-card">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                       <CardTitle>Personal Information</CardTitle>
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                       </form>
                     ) : (
                       <div className="space-y-4">
-                        <div className="flex items-center gap-4 p-4 bg-surface rounded-lg">
+                        <div className="flex items-center gap-4 p-4 glass-light rounded-lg">
                           <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                             <UserIcon className="w-6 h-6 text-primary" />
                           </div>
@@ -244,20 +244,20 @@ export default function ProfilePage() {
                           </div>
                         </div>
 
-                        <div className="p-4 bg-surface rounded-lg">
+                        <div className="p-4 glass-light rounded-lg">
                           <p className="text-sm text-muted-foreground">Email</p>
                           <p className="text-lg font-semibold">{user.email}</p>
                         </div>
 
                         {user.phone && (
-                          <div className="p-4 bg-surface rounded-lg">
+                        <div className="p-4 glass-light rounded-lg">
                             <p className="text-sm text-muted-foreground">Phone</p>
                             <p className="text-lg font-semibold">{user.phone}</p>
                           </div>
                         )}
 
                         {user.dateOfBirth && (
-                          <div className="p-4 bg-surface rounded-lg">
+                        <div className="p-4 glass-light rounded-lg">
                             <p className="text-sm text-muted-foreground">Date of Birth</p>
                             <p className="text-lg font-semibold">
                               {new Date(user.dateOfBirth).toLocaleDateString()}
@@ -265,7 +265,7 @@ export default function ProfilePage() {
                           </div>
                         )}
 
-                        <div className="p-4 bg-surface rounded-lg">
+                        <div className="p-4 glass-light rounded-lg">
                           <p className="text-sm text-muted-foreground">Role</p>
                           <p className="text-lg font-semibold capitalize">{user.role}</p>
                         </div>

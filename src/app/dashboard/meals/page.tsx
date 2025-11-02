@@ -114,13 +114,13 @@ export default function MealsPage() {
             </div>
 
             {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+              <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
             )}
 
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Meal Entries</CardTitle>
                 <CardDescription>All meal records for this month</CardDescription>
@@ -148,7 +148,7 @@ export default function MealsPage() {
                       </thead>
                       <tbody>
                         {meals.map((meal) => (
-                          <tr key={meal._id} className="border-b border-border hover:bg-surface/50">
+                          <tr key={meal._id} className="border-b border-white/10 dark:border-white/5 hover:bg-white/5">
                             <td className="py-3 px-4">{meal.userId.name}</td>
                             <td className="text-center py-3 px-4">{meal.breakfast}</td>
                             <td className="text-center py-3 px-4">{meal.lunch}</td>

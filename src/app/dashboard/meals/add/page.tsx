@@ -170,7 +170,7 @@ export default function AddMealPage() {
               Back to Meals
             </Link>
 
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Add Meal Entry</CardTitle>
                 <CardDescription>
@@ -183,7 +183,7 @@ export default function AddMealPage() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {error && (
-                    <div className="flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+                    <div className="flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                       <AlertCircle className="w-5 h-5 flex-shrink-0" />
                       {error}
                     </div>
@@ -262,7 +262,7 @@ export default function AddMealPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-surface rounded-lg">
+                  <div className="p-4 glass-light rounded-lg">
                     <p className="text-sm text-muted-foreground mb-2">Total Meals</p>
                     <p className="text-3xl font-bold">
                       {formData.breakfast + formData.lunch + formData.dinner}

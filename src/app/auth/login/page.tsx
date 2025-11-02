@@ -56,11 +56,11 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <Card>
+        <Card className="glass-card">
           <CardHeader className="space-y-2 text-center">
             <div className="flex justify-center mb-4">
-              <div className="p-3 bg-primary rounded-lg">
-                <LogIn className="w-6 h-6 text-primary-foreground" />
+              <div className="p-3 glass-glow bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg">
+                <LogIn className="w-6 h-6 text-primary" />
               </div>
             </div>
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
@@ -70,7 +70,7 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+                <div className="flex items-center gap-2 p-3 glass-light bg-destructive/10 text-destructive rounded-lg text-sm">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   {error}
                 </div>

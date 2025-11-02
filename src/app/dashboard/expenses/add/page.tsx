@@ -183,7 +183,7 @@ export default function AddExpensePage() {
               Back to Expenses
             </Link>
 
-            <Card>
+            <Card className="glass-card">
               <CardHeader>
                 <CardTitle>Add Expense</CardTitle>
                 <CardDescription>Record a new expense for the mess</CardDescription>
@@ -192,7 +192,7 @@ export default function AddExpensePage() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {error && (
-                    <div className="flex items-center gap-2 p-4 bg-destructive/10 text-destructive rounded-lg">
+                    <div className="flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
                       <AlertCircle className="w-5 h-5 flex-shrink-0" />
                       {error}
                     </div>

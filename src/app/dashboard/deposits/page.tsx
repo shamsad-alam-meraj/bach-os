@@ -206,16 +206,16 @@ export default function DepositsPage() {
             </div>
 
             {error && (
-              <div className="mb-6 p-4 bg-destructive/10 text-destructive rounded-lg">{error}</div>
+              <div className="mb-6 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">{error}</div>
             )}
 
             {success && (
-              <div className="mb-6 p-4 bg-green-100 text-green-800 rounded-lg">{success}</div>
+              <div className="mb-6 p-4 glass-light bg-green-100/50 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded-lg">{success}</div>
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Add Deposit Form */}
-              <Card className="lg:col-span-1">
+              <Card className="glass-card lg:col-span-1">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Plus className="w-5 h-5" />
@@ -292,7 +292,7 @@ export default function DepositsPage() {
               </Card>
 
               {/* Deposits List */}
-              <Card className="lg:col-span-2">
+              <Card className="glass-card lg:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Wallet className="w-5 h-5" />
@@ -316,7 +316,7 @@ export default function DepositsPage() {
                       {deposits.map((deposit) => (
                         <div
                           key={deposit._id}
-                          className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border"
+                          className="flex items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10"
                         >
                           <div className="flex-1">
                             <div className="flex items-center gap-3">
