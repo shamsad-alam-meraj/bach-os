@@ -99,4 +99,26 @@ export const apiClient = {
       return { error: (error as Error).message };
     }
   },
+
+  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return { error: error.error || 'Request failed' };
+      }
+
+      const data = await response.json();
+      return { data };
+    } catch (error) {
+      return { error: (error as Error).message };
+    }
+  },
 };
