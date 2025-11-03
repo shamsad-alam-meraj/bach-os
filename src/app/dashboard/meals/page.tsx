@@ -519,7 +519,7 @@ export default function MealsPage() {
                               <div className="flex items-center gap-2">
                                 {meal.userId.name}
                                 {meal.userId._id === currentMess?.managerId?._id && (
-                                  <Crown className="w-4 h-4 text-yellow-500" title="Manager" />
+                                  <Crown className="w-4 h-4 text-yellow-500" />
                                 )}
                               </div>
                             </td>
