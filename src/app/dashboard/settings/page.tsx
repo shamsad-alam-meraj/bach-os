@@ -3,7 +3,6 @@
 import type React from 'react';
 
 import DashboardHeader from '@/components/dashboard-header';
-import DashboardSidebar from '@/components/dashboard-sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -186,14 +185,12 @@ export default function SettingsPage() {
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className="flex">
-        <DashboardSidebar isOpen={sidebarOpen} />
-
-        <main className="flex-1 p-4 md:p-6">
+      <div className="flex justify-center w-full">
+        <main className="w-full max-w-4xl p-4 md:p-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl"
+            className="max-w-2xl mx-auto"
           >
             <div className="mb-8">
               <h2 className="text-3xl font-bold">Settings</h2>
@@ -325,7 +322,7 @@ export default function SettingsPage() {
                 <CardContent>
                   {mess && (
                     <div className="space-y-4">
-                        <div className="p-4 glass-light rounded-lg">
+                      <div className="p-4 glass-light rounded-lg">
                         <p className="text-sm text-muted-foreground">Mess Name</p>
                         <p className="text-lg font-semibold">{mess.name}</p>
                       </div>
@@ -338,7 +335,7 @@ export default function SettingsPage() {
                       )}
 
                       {mess.address && (
-                      <div className="p-4 glass-light rounded-lg">
+                        <div className="p-4 glass-light rounded-lg">
                           <p className="text-sm text-muted-foreground">Address</p>
                           <p className="text-lg">{mess.address}</p>
                         </div>

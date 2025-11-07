@@ -1,3 +1,4 @@
+// service-worker.js
 const CACHE_NAME = 'bach-os-v1';
 const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
 const API_CACHE = 'bach-os-api-v1';
@@ -5,11 +6,12 @@ const OFFLINE_PAGE = '/offline.html';
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
+  console.log('Service Worker installing');
   event.waitUntil(
     Promise.all([
       caches.open(CACHE_NAME).then((cache) => {
-        return cache.addAll(STATIC_ASSETS).catch(() => {
-          console.log('Some static assets could not be cached');
+        return cache.addAll(STATIC_ASSETS).catch((error) => {
+          console.log('Some static assets could not be cached:', error);
         });
       }),
       caches.open(API_CACHE),
@@ -20,11 +22,13 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME && cacheName !== API_CACHE) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -49,14 +53,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip service worker and manifest requests from being cached
+  if (url.pathname.includes('/service-worker.js') || url.pathname.includes('/manifest.json')) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
   // API calls - network first with cache fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
           if (response.ok) {
-            const cache = caches.open(API_CACHE);
-            cache.then((c) => c.put(request, response.clone()));
+            const responseClone = response.clone();
+            caches.open(API_CACHE).then((cache) => {
+              cache.put(request, responseClone);
+            });
           }
           return response;
         })
@@ -65,7 +77,6 @@ self.addEventListener('fetch', (event) => {
             if (cachedResponse) {
               return cachedResponse;
             }
-            // Return offline indicator
             return new Response(
               JSON.stringify({
                 error: 'Offline - cached data may be outdated',
@@ -85,16 +96,20 @@ self.addEventListener('fetch', (event) => {
   // Static assets - cache first strategy
   event.respondWith(
     caches.match(request).then((response) => {
+      // Return cached response if found
       if (response) {
         return response;
       }
 
+      // Otherwise fetch from network
       return fetch(request)
         .then((response) => {
+          // Check if we received a valid response
           if (!response || response.status !== 200 || response.type === 'error') {
             return response;
           }
 
+          // Cache the response
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(request, responseToCache);
@@ -115,6 +130,7 @@ self.addEventListener('fetch', (event) => {
 
 // Background sync for offline data
 self.addEventListener('sync', (event) => {
+  console.log('Background sync:', event.tag);
   if (event.tag === 'sync-meals') {
     event.waitUntil(syncOfflineData('meals'));
   } else if (event.tag === 'sync-expenses') {
@@ -150,7 +166,7 @@ async function syncOfflineData(type) {
 
 function openIndexedDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('MealSystemDB', 1);
+    const request = indexedDB.open('bachOSDB', 1);
 
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
@@ -158,7 +174,8 @@ function openIndexedDB() {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
       if (!db.objectStoreNames.contains('offlineData')) {
-        db.createObjectStore('offlineData', { keyPath: 'id' });
+        const store = db.createObjectStore('offlineData', { keyPath: 'id' });
+        store.createIndex('type', 'type', { unique: false });
       }
     };
   });
@@ -168,13 +185,11 @@ function getOfflineData(db, type) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(['offlineData'], 'readonly');
     const store = transaction.objectStore('offlineData');
-    const request = store.getAll();
+    const index = store.index('type');
+    const request = index.getAll(type);
 
     request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      const data = request.result.filter((item) => item.type === type);
-      resolve(data);
-    };
+    request.onsuccess = () => resolve(request.result);
   });
 }
 
@@ -191,7 +206,7 @@ function deleteOfflineData(db, type, id) {
 
 function getStoredToken() {
   return new Promise((resolve) => {
-    const request = indexedDB.open('MealSystemDB', 1);
+    const request = indexedDB.open('bachOSDB', 1);
     request.onsuccess = () => {
       const db = request.result;
       const transaction = db.transaction(['offlineData'], 'readonly');
@@ -201,6 +216,8 @@ function getStoredToken() {
       tokenRequest.onsuccess = () => {
         resolve(tokenRequest.result?.value || '');
       };
+      tokenRequest.onerror = () => resolve('');
     };
+    request.onerror = () => resolve('');
   });
 }
