@@ -1,5 +1,6 @@
 import OfflineIndicator from '@/components/offline-indicator';
 import PWAInstaller from '@/components/pwa-installer';
+import ServiceWorkerRegister from '@/components/service-worker-register';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import type React from 'react';
@@ -33,22 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/service-worker.js').catch(() => {
-                    console.log('Service worker registration failed');
-                  });
-                });
-              }
-            `,
-          }}
-        />
       </head>
       <body className={`${geistSans.className} ${geistMono.className}`}>
         {children}
+        <ServiceWorkerRegister />
         <PWAInstaller />
         <OfflineIndicator />
       </body>
