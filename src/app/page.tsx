@@ -3,6 +3,8 @@
 import { LogIn, TrendingUp, Users, Wifi } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 // Dynamically import framer-motion to avoid HMR issues
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), {
@@ -16,6 +18,41 @@ const MotionButton = dynamic(() => import('framer-motion').then((mod) => mod.mot
 });
 
 export default function Home() {
+  const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    // Check if token exists in localStorage
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          console.log('Token found, redirecting to dashboard');
+          router.replace('/dashboard'); // Use replace instead of push to avoid adding to history
+        }
+      } catch (error) {
+        console.log('Error checking auth:', error);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    // Delay the check to ensure we're on client side
+    checkAuth();
+  }, [router]);
+
+  // Show loading state while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   const features = [
     {
       icon: Users,
