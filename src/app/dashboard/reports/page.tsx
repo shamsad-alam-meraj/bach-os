@@ -126,14 +126,12 @@ export default function ReportsPage() {
     const month = summary.period.month;
 
     let csv = 'Member Settlement Report - ' + month + '\n\n';
-    csv += 'Name,Email,Total Meals,Meal Cost (৳),Total Deposit (৳),Expense Share (৳),Balance (৳)\n';
+    csv += 'Name,Total Meals,Meal Cost,Total Deposit,Balance\n';
 
     memberReports.forEach((report) => {
-      csv += `"${report.name}","${report.email}",${report.totalMeals},${report.mealCost.toFixed(
+      csv += `"${report.name}",${report.totalMeals},${report.mealCost.toFixed(
         2
-      )},${report.totalDeposit.toFixed(2)},${report.expenseShare.toFixed(
-        2
-      )},${report.balance.toFixed(2)}\n`;
+      )},${report.totalDeposit.toFixed(2)},${report.balance.toFixed(2)}\n`;
     });
 
     const element = document.createElement('a');
