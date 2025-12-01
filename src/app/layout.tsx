@@ -1,6 +1,8 @@
+import { ErrorBoundary } from '@/components/error-boundary';
 import OfflineIndicator from '@/components/offline-indicator';
 import PWAInstaller from '@/components/pwa-installer';
 import ServiceWorkerRegister from '@/components/service-worker-register';
+import { AuthProvider } from '@/lib/auth-context';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import type React from 'react';
@@ -36,10 +38,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className={`${geistSans.className} ${geistMono.className}`}>
-        {children}
-        <ServiceWorkerRegister />
-        <PWAInstaller />
-        <OfflineIndicator />
+        <ErrorBoundary>
+          <AuthProvider>
+            {children}
+            <ServiceWorkerRegister />
+            <PWAInstaller />
+            <OfflineIndicator />
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

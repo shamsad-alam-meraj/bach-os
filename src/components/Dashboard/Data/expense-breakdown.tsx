@@ -1,12 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import type { ExpenseBreakdownItem } from '@/types/types';
 import { PieChart } from 'lucide-react';
 
 interface ExpenseBreakdownProps {
-  expenseBreakdown: Array<{
-    _id: string;
-    totalAmount: number;
-    count: number;
-  }>;
+  expenseBreakdown: ExpenseBreakdownItem[];
 }
 
 export default function ExpenseBreakdown({ expenseBreakdown }: ExpenseBreakdownProps) {
