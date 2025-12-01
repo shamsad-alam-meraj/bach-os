@@ -58,7 +58,7 @@ export default function SignupPage() {
       }
 
       // Store token and redirect
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', data.data.token);
       router.push('/dashboard');
     } catch (err) {
       setError('An error occurred. Please try again.');
