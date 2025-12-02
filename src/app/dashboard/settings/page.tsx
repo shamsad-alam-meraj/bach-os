@@ -140,7 +140,7 @@ export default function SettingsPage() {
         return;
       }
 
-      const res = await apiClient.post<Mess>('/mess/create', {
+      const res = await apiClient.post<Mess>('/mess', {
         name: formData.name,
         description: formData.description,
         address: formData.address,
@@ -152,8 +152,8 @@ export default function SettingsPage() {
         return;
       }
 
-      if (res.data) {
-        setMess(res.data);
+      if (res.data.data) {
+        setMess(res.data.data);
         setHasMessCreated(true);
         setSuccess('Mess created successfully!');
         setTimeout(() => {

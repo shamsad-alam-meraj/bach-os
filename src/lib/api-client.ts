@@ -58,7 +58,7 @@ export const apiClient = {
       }
 
       const data = await response.json();
-      return { data, success: true };
+      return { data: data.data, success: true };
     } catch (error) {
       return {
         error: { message: (error as Error).message, code: 'NETWORK_ERROR' },
