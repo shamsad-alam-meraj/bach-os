@@ -23,11 +23,11 @@ export default function ExpenseBreakdown({ expenseBreakdown }: ExpenseBreakdownP
           <div className="space-y-3">
             {expenseBreakdown.slice(0, 5).map((category) => (
               <div
-                key={category._id}
+                key={category.name}
                 className="flex items-center justify-between p-3 glass-light rounded-lg"
               >
                 <div>
-                  <p className="font-medium capitalize">{category._id}</p>
+                  <p className="font-medium capitalize">{category.name}</p>
                   <p className="text-sm text-muted-foreground">{category.count} transactions</p>
                 </div>
                 <p className="font-semibold text-lg">৳{category.totalAmount}</p>
