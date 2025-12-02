@@ -27,7 +27,7 @@ export default function ExpenseBreakdown({ expenseBreakdown }: ExpenseBreakdownP
                 className="flex items-center justify-between p-3 glass-light rounded-lg"
               >
                 <div>
-                  <p className="font-medium capitalize">{category.name}</p>
+                  <p className="font-medium capitalize">{category.category}</p>
                   <p className="text-sm text-muted-foreground">{category.count} transactions</p>
                 </div>
                 <p className="font-semibold text-lg">৳{category.totalAmount}</p>
