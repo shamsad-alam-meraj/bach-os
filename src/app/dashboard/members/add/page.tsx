@@ -69,7 +69,7 @@ export default function AddMemberPage() {
         return;
       }
 
-      const res = await apiClient.post(`/mess/${messId}/add-member`, { email });
+      const res = await apiClient.post(`/mess/${messId}/members`, { email });
 
       if (res.error) {
         setError(res.error);
