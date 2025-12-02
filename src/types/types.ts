@@ -60,7 +60,7 @@ export interface MemberStats {
 }
 
 export interface ExpenseBreakdownItem {
-  _id: string;
+  name: string;
   totalAmount: number;
   count: number;
 }
