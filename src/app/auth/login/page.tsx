@@ -65,6 +65,11 @@ export default function LoginPage() {
             </div>
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>Sign in to your meal system account</CardDescription>
+            <CardDescription>
+              For Testing Purpose use: <br /> Email-
+              <span className="font-bold">manager@bachos.com</span> <br />
+              Password-<span className="font-bold">123456</span>
+            </CardDescription>
           </CardHeader>
 
           <CardContent>

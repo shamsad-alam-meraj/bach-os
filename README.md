@@ -1,4 +1,4 @@
-# BachOS - Bachelor Meal Management System
+# bachOS - Bachelors' Operation System
 
 A modern, responsive web application for managing bachelor meal groups with real-time expense tracking, member management, and offline support. Built with Next.js and designed for mobile-first experience.
 
@@ -56,11 +56,6 @@ A modern, responsive web application for managing bachelor meal groups with real
    npm install
    # or
    yarn install
-   ```
-
-   **Note**: Make sure to install the additional packages for state management and data fetching:
-   ```bash
-   npm install zustand @tanstack/react-query @tanstack/react-query-devtools
    ```
 
 3. **Setup environment variables**
