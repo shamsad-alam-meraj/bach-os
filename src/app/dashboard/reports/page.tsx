@@ -178,16 +178,16 @@ export default function ReportsPage() {
 
         <main className="flex-1 p-4 md:p-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 sm:mb-8">
               <div>
-                <h2 className="text-3xl font-bold">Reports</h2>
-                <p className="text-muted-foreground">
+                <h2 className="text-2xl sm:text-3xl font-bold">Reports</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">
                   Settlement and detailed reports for {summary.period.month}
                 </p>
               </div>
               <Button onClick={downloadReport} className="gap-2">
                 <Download className="w-4 h-4" />
-                Download CSV
+                Download
               </Button>
             </div>
 
@@ -273,57 +273,55 @@ export default function ReportsPage() {
                 {memberReports.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">No data available</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left py-3 px-4 font-semibold">Member</th>
-                          <th className="text-center py-3 px-4 font-semibold">Meals</th>
-                          <th className="text-right py-3 px-4 font-semibold">Meal Cost</th>
-                          <th className="text-right py-3 px-4 font-semibold">Total Deposit</th>
-                          <th className="text-right py-3 px-4 font-semibold">Balance</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {memberReports.map((report, idx) => (
-                          <tr
-                            key={idx}
-                            className="border-b border-white/10 dark:border-white/5 hover:bg-white/5"
-                          >
-                            <td className="py-3 px-4">
-                              <div>
-                                <p className="font-medium">{report.name}</p>
-                                <p className="text-xs text-muted-foreground">{report.email}</p>
-                              </div>
-                            </td>
-                            <td className="text-center py-3 px-4">{report.totalMeals}</td>
-                            <td className="text-right py-3 px-4">৳{report.mealCost.toFixed(2)}</td>
-                            <td className="text-right py-3 px-4">
-                              ৳{report.totalDeposit.toFixed(2)}
-                            </td>
-                            <td className="text-right py-3 px-4">
-                              <div className="flex items-center justify-end gap-2">
-                                {report.balance >= 0 ? (
-                                  <TrendingUp className="w-4 h-4 text-green-600" />
-                                ) : (
-                                  <TrendingDown className="w-4 h-4 text-red-600" />
-                                )}
-                                <span
-                                  className={`font-semibold ${
-                                    report.balance >= 0 ? 'text-green-600' : 'text-red-600'
-                                  }`}
-                                >
-                                  ৳{Math.abs(report.balance).toFixed(2)}
-                                </span>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {report.balance >= 0 ? 'Will receive' : 'Will pay'}
-                              </p>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="space-y-4">
+                    {memberReports.map((report, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-base sm:text-lg">{report.name}</h3>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-sm text-muted-foreground">{report.email}</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap mt-2">
+                            <div className="flex items-center gap-1">
+                              <span>Meals:</span>
+                              <span className="font-medium">{report.totalMeals}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span>Meal Cost:</span>
+                              <span className="font-medium">৳{report.mealCost.toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span>Total Deposit:</span>
+                              <span className="font-medium">৳{report.totalDeposit.toFixed(2)}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="flex items-center justify-end gap-2 mb-2">
+                            {report.balance >= 0 ? (
+                              <TrendingUp className="w-5 h-5 text-green-600" />
+                            ) : (
+                              <TrendingDown className="w-5 h-5 text-red-600" />
+                            )}
+                            <span
+                              className={`text-2xl font-bold ${
+                                report.balance >= 0 ? 'text-green-600' : 'text-red-600'
+                              }`}
+                            >
+                              ৳{Math.abs(report.balance).toFixed(2)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {report.balance >= 0 ? 'Will receive' : 'Will pay'}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 )}
               </CardContent>
@@ -343,38 +341,40 @@ export default function ReportsPage() {
                     No expenses recorded
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left py-3 px-4 font-semibold">Description</th>
-                          <th className="text-left py-3 px-4 font-semibold">Category</th>
-                          <th className="text-left py-3 px-4 font-semibold">Expensed By</th>
-                          <th className="text-left py-3 px-4 font-semibold">Added By</th>
-                          <th className="text-right py-3 px-4 font-semibold">Amount</th>
-                          <th className="text-left py-3 px-4 font-semibold">Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {detailedExpenses.map((expense) => (
-                          <tr
-                            key={expense._id}
-                            className="border-b border-white/10 dark:border-white/5 hover:bg-white/5"
-                          >
-                            <td className="py-3 px-4">{expense.description}</td>
-                            <td className="py-3 px-4 capitalize">{expense.category}</td>
-                            <td className="py-3 px-4">{expense?.expensedBy?.name}</td>
-                            <td className="py-3 px-4">{expense.addedBy.name}</td>
-                            <td className="text-right py-3 px-4 font-semibold">
-                              ৳{expense.amount}
-                            </td>
-                            <td className="py-3 px-4">
+                  <div className="space-y-4">
+                    {detailedExpenses.map((expense) => (
+                      <motion.div
+                        key={expense._id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-base sm:text-lg">{expense.description}</h3>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-sm text-muted-foreground capitalize">
+                              {expense.category}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
                               {new Date(expense.date).toLocaleDateString()}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap mt-2">
+                            <div className="flex items-center gap-1">
+                              <span>Expensed by:</span>
+                              <span className="font-medium">{expense?.expensedBy?.name}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span>Added by:</span>
+                              <span className="font-medium">{expense.addedBy.name}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-2xl font-bold text-primary">৳{expense.amount}</p>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 )}
               </CardContent>
@@ -392,41 +392,33 @@ export default function ReportsPage() {
                     No deposits recorded
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left py-3 px-4 font-semibold">Member</th>
-                          <th className="text-left py-3 px-4 font-semibold">Description</th>
-                          <th className="text-right py-3 px-4 font-semibold">Amount</th>
-                          <th className="text-left py-3 px-4 font-semibold">Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {detailedDeposits.map((deposit) => (
-                          <tr
-                            key={deposit._id}
-                            className="border-b border-white/10 dark:border-white/5 hover:bg-white/5"
-                          >
-                            <td className="py-3 px-4">
-                              <div>
-                                <p className="font-medium">{deposit.userId.name}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {deposit.userId.email}
-                                </p>
-                              </div>
-                            </td>
-                            <td className="py-3 px-4">{deposit.description || 'No description'}</td>
-                            <td className="text-right py-3 px-4 font-semibold text-green-600">
-                              ৳{deposit.amount}
-                            </td>
-                            <td className="py-3 px-4">
+                  <div className="space-y-4">
+                    {detailedDeposits.map((deposit) => (
+                      <motion.div
+                        key={deposit._id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-base sm:text-lg">{deposit.userId.name}</h3>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-sm text-muted-foreground">
+                              {deposit.userId.email}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
                               {new Date(deposit.date).toLocaleDateString()}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </span>
+                          </div>
+                          <div className="text-sm text-muted-foreground mt-2">
+                            {deposit.description || 'No description'}
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-2xl font-bold text-green-600">৳{deposit.amount}</p>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 )}
               </CardContent>

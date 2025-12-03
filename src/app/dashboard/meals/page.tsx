@@ -494,70 +494,66 @@ export default function MealsPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left py-3 px-4 font-semibold">Member</th>
-                          <th className="text-center py-3 px-4 font-semibold">Breakfast</th>
-                          <th className="text-center py-3 px-4 font-semibold">Lunch</th>
-                          <th className="text-center py-3 px-4 font-semibold">Dinner</th>
-                          <th className="text-center py-3 px-4 font-semibold">Total</th>
-                          <th className="text-left py-3 px-4 font-semibold">Date</th>
-                          {isManager && (
-                            <th className="text-center py-3 px-4 font-semibold">Actions</th>
-                          )}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {meals.map((meal) => (
-                          <tr
-                            key={meal._id}
-                            className="border-b border-white/10 dark:border-white/5 hover:bg-white/5"
-                          >
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-2">
+                  <div className="space-y-4">
+                    {meals.map((meal) => (
+                      <motion.div
+                        key={meal._id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 hover:bg-white/5 transition-colors gap-4"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start gap-3 mb-2">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-lg truncate">
                                 {meal.userId.name}
+                              </h3>
+                              <div className="flex items-center gap-3 mt-1">
+                                <span className="text-sm text-muted-foreground">
+                                  {new Date(meal.date).toLocaleDateString()}
+                                </span>
                                 {meal.userId._id === currentMess?.managerId?._id && (
                                   <Crown className="w-4 h-4 text-yellow-500" />
                                 )}
                               </div>
-                            </td>
-                            <td className="text-center py-3 px-4">{meal.breakfast}</td>
-                            <td className="text-center py-3 px-4">{meal.lunch}</td>
-                            <td className="text-center py-3 px-4">{meal.dinner}</td>
-                            <td className="text-center py-3 px-4 font-semibold">
-                              {meal.breakfast + meal.lunch + meal.dinner}
-                            </td>
-                            <td className="py-3 px-4">
-                              {new Date(meal.date).toLocaleDateString()}
-                            </td>
-                            {isManager && (
-                              <td className="py-3 px-4">
-                                <div className="flex justify-center gap-2">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleEdit(meal)}
-                                    title="Edit meal record"
-                                  >
-                                    <Edit className="w-4 h-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleDeleteClick(meal)}
-                                    title="Delete meal record"
-                                  >
-                                    <Trash2 className="w-4 h-4 text-destructive" />
-                                  </Button>
-                                </div>
-                              </td>
-                            )}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                            <div className="flex items-center gap-1">
+                              <span>Meals:</span>
+                              <span className="font-medium">
+                                B: {meal.breakfast} | L: {meal.lunch} | D: {meal.dinner}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          {isManager && (
+                            <div className="flex gap-1 mb-2 justify-end">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(meal)}
+                                title="Edit meal record"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteClick(meal)}
+                                title="Delete meal record"
+                              >
+                                <Trash2 className="w-4 h-4 text-destructive" />
+                              </Button>
+                            </div>
+                          )}
+                          <p className="text-2xl font-bold text-primary">
+                            {meal.breakfast + meal.lunch + meal.dinner} meals
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 )}
               </CardContent>
