@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import type { User } from '@/types/types';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 /**
  * Authentication context interface defining the shape of auth state and methods
@@ -97,7 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     token,
     isLoading,
-    isAuthenticated: !!token && !!user,
+    isAuthenticated: !!token,
     login,
     logout,
     updateUser,
