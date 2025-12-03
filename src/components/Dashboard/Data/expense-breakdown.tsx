@@ -24,13 +24,13 @@ export default function ExpenseBreakdown({ expenseBreakdown }: ExpenseBreakdownP
             {expenseBreakdown.slice(0, 5).map((category) => (
               <div
                 key={category.category}
-                className="flex items-center justify-between p-3 glass-light rounded-lg"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 glass-light rounded-lg"
               >
                 <div>
                   <p className="font-medium capitalize">{category.category}</p>
                   <p className="text-sm text-muted-foreground">{category.count} transactions</p>
                 </div>
-                <p className="font-semibold text-lg">৳{category.totalAmount}</p>
+                <p className="font-semibold text-lg sm:text-right">৳{category.totalAmount}</p>
               </div>
             ))}
           </div>

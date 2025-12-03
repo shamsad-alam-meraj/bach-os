@@ -29,7 +29,7 @@ export default function MemberStats({ memberStats }: MemberStatsProps) {
             {memberStats.slice(0, 5).map((member) => (
               <div
                 key={member.userId}
-                className="flex items-center justify-between p-3 glass-light rounded-lg"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 glass-light rounded-lg"
               >
                 <div>
                   <p className="font-medium">{member.userName}</p>
@@ -37,7 +37,7 @@ export default function MemberStats({ memberStats }: MemberStatsProps) {
                     {member.daysWithMeals} days with meals
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right">
                   <p className="font-semibold">{member.totalMeals} meals</p>
                   <p className="text-xs text-muted-foreground">Avg: {member.avgMealsPerDay}/day</p>
                 </div>

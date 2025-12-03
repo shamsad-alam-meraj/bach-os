@@ -155,9 +155,9 @@ export default function AnalyticsPage() {
 
         <main className="flex-1 p-4 md:p-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold">Analytics</h2>
-              <p className="text-muted-foreground">
+            <div className="mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold">Analytics</h2>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Detailed insights and statistics for {summary.period.month}
               </p>
             </div>

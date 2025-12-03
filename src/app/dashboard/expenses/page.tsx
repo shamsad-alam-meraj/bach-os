@@ -308,13 +308,13 @@ export default function ExpensesPage() {
 
         <main className="flex-1 p-4 md:p-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-3xl font-bold">Expenses</h2>
-                  {isManager && <Crown className="w-6 h-6 text-yellow-500" />}
+                  <h2 className="text-2xl sm:text-3xl font-bold">Expenses</h2>
+                  {isManager && <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />}
                 </div>
-                <p className="text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground">
                   {isManager ? 'Manage all expenses' : 'View expenses'}
                 </p>
               </div>
@@ -639,7 +639,7 @@ export default function ExpensesPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start gap-3 mb-2">
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-lg truncate">
+                              <h3 className="font-semibold text-base sm:text-lg">
                                 {expense.description}
                               </h3>
                               <div className="flex items-center gap-3 mt-1">

@@ -55,14 +55,14 @@ function RecentActivityItem({ type, data }: RecentActivityItemProps) {
   if (type === 'meals') {
     const meal = data as Meal;
     return (
-      <div className="flex items-center justify-between p-3 glass-light rounded-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 glass-light rounded-lg">
         <div>
           <p className="font-medium">{meal.userId.name}</p>
           <p className="text-sm text-muted-foreground">
             {new Date(meal.date).toLocaleDateString()}
           </p>
         </div>
-        <div className="text-right">
+        <div className="sm:text-right">
           <p className="font-semibold">{meal.breakfast + meal.lunch + meal.dinner} meals</p>
           <p className="text-xs text-muted-foreground">
             B: {meal.breakfast} | L: {meal.lunch} | D: {meal.dinner}
@@ -74,7 +74,7 @@ function RecentActivityItem({ type, data }: RecentActivityItemProps) {
 
   const expense = data as Expense;
   return (
-    <div className="flex items-center justify-between p-3 glass-light rounded-lg">
+    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 p-3 glass-light rounded-lg">
       <div className="flex-1">
         <p className="font-medium">{expense.description}</p>
         <div className="flex items-center gap-2 mt-1">
@@ -84,7 +84,7 @@ function RecentActivityItem({ type, data }: RecentActivityItemProps) {
           </span>
         </div>
       </div>
-      <p className="font-semibold text-lg">৳{expense.amount}</p>
+      <p className="font-semibold text-lg sm:text-right">৳{expense.amount}</p>
     </div>
   );
 }
