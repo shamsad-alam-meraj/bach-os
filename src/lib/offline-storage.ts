@@ -1,7 +1,9 @@
 interface OfflineData {
   id: string;
-  type: 'meal' | 'expense';
-  data: any;
+  type: 'meal' | 'expense' | 'member' | 'deposit' | 'profile';
+  operation: 'POST' | 'PUT' | 'DELETE';
+  endpoint: string;
+  data?: any;
   timestamp: number;
   synced: boolean;
 }
@@ -12,7 +14,7 @@ export const initOfflineStorage = async (): Promise<void> => {
   if (typeof window === 'undefined') return;
 
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('MealSystemDB', 1);
+    const request = indexedDB.open('bachOSDB', 2);
 
     request.onerror = () => reject(request.error);
     request.onsuccess = () => {
@@ -28,19 +30,30 @@ export const initOfflineStorage = async (): Promise<void> => {
       if (!database.objectStoreNames.contains('syncQueue')) {
         database.createObjectStore('syncQueue', { keyPath: 'id' });
       }
+      // Handle migration from version 1 to 2
+      if (event.oldVersion < 2) {
+        // The interface change is backward compatible as we added optional fields
+      }
     };
   });
 };
 
-export const saveOfflineData = async (type: 'meal' | 'expense', data: any): Promise<void> => {
+export const saveOfflineData = async (
+  type: 'meal' | 'expense' | 'member' | 'deposit' | 'profile',
+  operation: 'POST' | 'PUT' | 'DELETE',
+  endpoint: string,
+  data?: any
+): Promise<void> => {
   if (!db) await initOfflineStorage();
 
   return new Promise((resolve, reject) => {
     const transaction = db!.transaction(['offlineData'], 'readwrite');
     const store = transaction.objectStore('offlineData');
     const offlineData: OfflineData = {
-      id: `${type}-${Date.now()}`,
+      id: `${type}-${operation}-${Date.now()}`,
       type,
+      operation,
+      endpoint,
       data,
       timestamp: Date.now(),
       synced: false,
@@ -52,7 +65,10 @@ export const saveOfflineData = async (type: 'meal' | 'expense', data: any): Prom
   });
 };
 
-export const getOfflineData = async (type?: 'meal' | 'expense'): Promise<OfflineData[]> => {
+export const getOfflineData = async (
+  type?: 'meal' | 'expense' | 'member' | 'deposit' | 'profile',
+  operation?: 'POST' | 'PUT' | 'DELETE'
+): Promise<OfflineData[]> => {
   if (!db) await initOfflineStorage();
 
   return new Promise((resolve, reject) => {
@@ -63,11 +79,17 @@ export const getOfflineData = async (type?: 'meal' | 'expense'): Promise<Offline
     request.onerror = () => reject(request.error);
     request.onsuccess = () => {
       const data = request.result;
+      let filtered = data.filter((item) => !item.synced);
+
       if (type) {
-        resolve(data.filter((item) => item.type === type && !item.synced));
-      } else {
-        resolve(data.filter((item) => !item.synced));
+        filtered = filtered.filter((item) => item.type === type);
       }
+
+      if (operation) {
+        filtered = filtered.filter((item) => item.operation === operation);
+      }
+
+      resolve(filtered);
     };
   });
 };
