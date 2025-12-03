@@ -1,6 +1,6 @@
-# Bachelor Meal Management System with PWA
+# BachOS - Bachelor Meal Management System
 
-A full-stack web application for managing bachelor meal groups with real-time expense tracking, member management, and offline support.
+A modern, responsive web application for managing bachelor meal groups with real-time expense tracking, member management, and offline support. Built with Next.js and designed for mobile-first experience.
 
 ## Features
 
@@ -13,6 +13,7 @@ A full-stack web application for managing bachelor meal groups with real-time ex
 - **Expense Tracking**: Record and categorize expenses
 - **Analytics**: Visual charts and statistics
 - **Settlement Reports**: Calculate member balances
+- **Mobile Responsive**: Optimized for mobile devices
 
 ### PWA Features
 
@@ -20,74 +21,74 @@ A full-stack web application for managing bachelor meal groups with real-time ex
 - **Installable**: Install as native app on mobile/desktop
 - **Service Worker**: Automatic caching and sync
 - **Offline Data Sync**: Automatic sync when back online
-- **Push Notifications**: Real-time updates (coming soon)
 
 ### Technical Features
 
-- **Next.js 16**: Latest React framework with React Compiler
+- **Next.js 16**: Latest React framework with App Router
 - **React 19**: Modern React with new features
 - **TypeScript**: Type-safe development
-- **Tailwind CSS v4**: Modern styling
-- **Express.js**: Robust backend
-- **MongoDB**: Flexible database
-- **Turbopack**: Lightning-fast builds
+- **Tailwind CSS v4**: Modern styling with responsive design
+- **Framer Motion**: Smooth animations and transitions
+- **Recharts**: Interactive data visualizations
+- **React Hook Form**: Efficient form handling
+- **Zod**: Schema validation
 
 ## Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
-- MongoDB (local or Atlas)
-- npm or pnpm
+- npm or yarn
 
 ### Installation
 
 1. **Clone the repository**
    \`\`\`bash
-   git clone https://github.com/yourusername/meal-system.git
-   cd meal-system
+   git clone https://github.com/yourusername/bach-os.git
+   cd bach-os
    \`\`\`
 
-2. **Setup Backend**
+2. **Install dependencies**
    \`\`\`bash
-   cd backend
    npm install
-   cp .env.example .env
+   \`\`\`
 
-   # Edit .env with your MongoDB URI
+3. **Setup environment variables**
+   \`\`\`bash
+   cp .env.example .env.local
+   # Edit .env.local if needed (API URL is already configured)
+   \`\`\`
 
+4. **Start development server**
+   \`\`\`bash
    npm run dev
    \`\`\`
 
-3. **Setup Frontend**
-   \`\`\`bash
-   cd ..
-   npm install
-   cp .env.local.example .env.local
-   npm run dev
-   \`\`\`
-
-4. **Open Application**
+5. **Open Application**
    - Frontend: http://localhost:3000
-   - Backend: http://localhost:5000
 
 ## Documentation
 
-- **[NEXT_JS_16_SETUP.md](./NEXT_JS_16_SETUP.md)** - Detailed setup guide
-- **[QUICK_START.md](./QUICK_START.md)** - 5-minute quick start
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - API reference
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment
+For detailed API documentation, please refer to the backend repository or contact the development team.
 
 ## Project Structure
 
 \`\`\`
-meal-system/
-├── app/ # Next.js app directory
-├── components/ # React components
-├── lib/ # Utilities and helpers
-├── public/ # Static assets
-├── backend/ # Express backend
-├── docs/ # Documentation
+bach-os/
+├── src/
+│   ├── app/ # Next.js App Router pages
+│   │   ├── auth/ # Authentication pages
+│   │   ├── dashboard/ # Protected dashboard pages
+│   │   └── globals.css # Global styles
+│   ├── components/ # React components
+│   │   ├── ui/ # shadcn/ui components
+│   │   └── Dashboard/ # Dashboard-specific components
+│   ├── hooks/ # Custom React hooks
+│   ├── lib/ # Utilities and helpers
+│   ├── types/ # TypeScript type definitions
+│   └── utils/ # Utility functions
+├── public/ # Static assets and PWA files
+├── .qodo/ # Testing configuration
 └── package.json
 \`\`\`
 
@@ -95,30 +96,30 @@ meal-system/
 
 ### Frontend
 
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS v4
-- shadcn/ui
-- Recharts
-- React Hook Form
-- Zustand
+- **Next.js 16**: React framework with App Router
+- **React 19**: Modern React with concurrent features
+- **TypeScript**: Type-safe development
+- **Tailwind CSS v4**: Utility-first CSS framework
+- **shadcn/ui**: Modern UI components built on Radix UI
+- **Framer Motion**: Animation library for smooth transitions
+- **Recharts**: Composable charting library
+- **React Hook Form**: Performant forms with easy validation
+- **Zod**: TypeScript-first schema validation
+- **Lucide React**: Beautiful icon library
 
 ### Backend
 
-- Express.js
-- MongoDB
-- Mongoose
-- JWT
-- bcryptjs
-- CORS
+- **Express.js**: RESTful API server
+- **MongoDB**: NoSQL database
+- **Mongoose**: MongoDB object modeling
+- **JWT**: JSON Web Token authentication
+- **bcryptjs**: Password hashing
 
 ### DevTools
 
-- Turbopack
-- React Compiler
-- ESLint
-- TypeScript
+- **ESLint**: Code linting
+- **Jest**: Testing framework
+- **TypeScript**: Type checking
 
 ## Key Pages
 
@@ -141,83 +142,82 @@ meal-system/
 
 ## API Endpoints
 
+The frontend connects to a separate backend API. Here are the main endpoints used:
+
 ### Authentication
 
-- \`POST /api/auth/signup\` - Create account
-- \`POST /api/auth/login\` - Login
+- \`POST /auth/signup\` - Create account
+- \`POST /auth/login\` - Login
 
 ### Users
 
-- \`GET /api/users/profile\` - Get profile
-- \`PUT /api/users/profile\` - Update profile
+- \`GET /users/profile\` - Get user profile
+- \`PUT /users/profile\` - Update user profile
 
-### Mess
+### Mess Management
 
-- \`POST /api/mess/create\` - Create mess
-- \`GET /api/mess/:messId\` - Get mess details
-- \`POST /api/mess/:messId/add-member\` - Add member
+- \`POST /mess/create\` - Create new mess
+- \`GET /mess\` - Get all messes (admin)
+- \`GET /mess/:id\` - Get mess details
+- \`POST /mess/admin/cleanup\` - Data cleanup (admin)
 
 ### Meals
 
-- \`POST /api/meals\` - Add meal
-- \`GET /api/meals/mess/:messId/month\` - Get monthly meals
+- \`POST /meals\` - Add meal entry
+- \`GET /meals/mess/:messId\` - Get meals for mess
+- \`PUT /meals/:id\` - Update meal entry
+- \`DELETE /meals/:id\` - Delete meal entry
 
 ### Expenses
 
-- \`POST /api/expenses\` - Add expense
-- \`GET /api/expenses/mess/:messId\` - Get expenses
+- \`POST /expenses\` - Add expense
+- \`GET /expenses/mess/:messId\` - Get expenses for mess
+- \`PUT /expenses/:id\` - Update expense
+- \`DELETE /expenses/:id\` - Delete expense
 
-See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for complete reference.
+### Deposits
+
+- \`GET /deposits/mess/:messId\` - Get deposits for mess
+
+### Analytics & Reports
+
+- \`GET /analytics/:messId\` - Get analytics data
+- \`GET /reports/:messId\` - Get settlement reports
 
 ## Development
 
 ### Available Scripts
 
-**Frontend:**
 \`\`\`bash
-npm run dev # Start development server
-npm run build # Build for production
-npm start # Start production server
-npm run lint # Run ESLint
-\`\`\`
-
-**Backend:**
-\`\`\`bash
-npm run dev # Start development server
-npm run build # Build for production
-npm start # Start production server
+npm run dev      # Start development server
+npm run build    # Build for production
+npm start        # Start production server
+npm run lint     # Run ESLint
+npm test         # Run Jest tests
+npm run test:watch # Run tests in watch mode
 \`\`\`
 
 ### Environment Variables
 
 **Frontend (.env.local):**
 \`\`\`
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-\`\`\`
+# API Base URL (already configured for production)
+NEXT_PUBLIC_API_URL=https://bachos-api.onrender.com/
 
-**Backend (.env):**
-\`\`\`
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/meal-system
-JWT_SECRET=your_secret_key
-NODE_ENV=development
+# For local development, uncomment and modify:
+# NEXT_PUBLIC_API_URL=http://localhost:4000/
 \`\`\`
 
 ## Deployment
 
-### Deploy Frontend to Vercel
+### Deploy to Vercel
 
 \`\`\`bash
-vercel
+npm install -g vercel
+vercel --prod
 \`\`\`
 
-### Deploy Backend to Railway
-
-\`\`\`bash
-railway up
-\`\`\`
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
+The application is configured to connect to the production API automatically. For custom deployments, update the \`NEXT_PUBLIC_API_URL\` environment variable.
 
 ## PWA Features
 
@@ -267,23 +267,29 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
 
 ## Troubleshooting
 
-### Backend won't start
+### Application won't start
 
-- Check MongoDB is running
-- Verify port 5000 is available
-- Check .env configuration
+- Check Node.js version (18+ required)
+- Verify all dependencies are installed with \`npm install\`
+- Check .env.local configuration
 
-### Frontend can't connect to backend
+### API connection issues
 
-- Verify backend is running
-- Check NEXT_PUBLIC_API_URL
-- Check CORS configuration
+- Verify NEXT_PUBLIC_API_URL is set correctly
+- Check network connectivity
+- Backend API may be temporarily unavailable
 
 ### Service worker not registering
 
 - Clear browser cache
 - Hard refresh (Ctrl+Shift+R)
-- Check DevTools → Application
+- Check DevTools → Application → Service Workers
+
+### Mobile responsiveness issues
+
+- Test on actual mobile devices
+- Check browser zoom level
+- Ensure viewport meta tag is present
 
 ## Contributing
 
@@ -307,6 +313,7 @@ For issues and questions:
 
 ## Roadmap
 
+- [x] Mobile responsive design
 - [ ] Push notifications
 - [ ] Email notifications
 - [ ] Advanced analytics
@@ -326,5 +333,3 @@ For issues and questions:
 ---
 
 **Happy Coding!** 🚀
-
-For detailed setup instructions, see [NEXT_JS_16_SETUP.md](./NEXT_JS_16_SETUP.md)
