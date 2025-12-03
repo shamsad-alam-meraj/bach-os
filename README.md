@@ -21,6 +21,7 @@ A modern, responsive web application for managing bachelor meal groups with real
 - **Installable**: Install as native app on mobile/desktop
 - **Service Worker**: Automatic caching and sync
 - **Offline Data Sync**: Automatic sync when back online
+- **Background Sync**: Sync queued operations when connection restored
 
 ### Technical Features
 
@@ -28,6 +29,8 @@ A modern, responsive web application for managing bachelor meal groups with real
 - **React 19**: Modern React with new features
 - **TypeScript**: Type-safe development
 - **Tailwind CSS v4**: Modern styling with responsive design
+- **Zustand**: Lightweight state management
+- **TanStack Query**: Powerful data fetching and caching
 - **Framer Motion**: Smooth animations and transitions
 - **Recharts**: Interactive data visualizations
 - **React Hook Form**: Efficient form handling
@@ -43,26 +46,33 @@ A modern, responsive web application for managing bachelor meal groups with real
 ### Installation
 
 1. **Clone the repository**
-   \`\`\`bash
+   ```bash
    git clone https://github.com/yourusername/bach-os.git
    cd bach-os
-   \`\`\`
+   ```
 
 2. **Install dependencies**
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   # or
+   yarn install
+   ```
+
+   **Note**: Make sure to install the additional packages for state management and data fetching:
+   ```bash
+   npm install zustand @tanstack/react-query @tanstack/react-query-devtools
+   ```
 
 3. **Setup environment variables**
-   \`\`\`bash
+   ```bash
    cp .env.example .env.local
    # Edit .env.local if needed (API URL is already configured)
-   \`\`\`
+   ```
 
 4. **Start development server**
-   \`\`\`bash
+   ```bash
    npm run dev
-   \`\`\`
+   ```
 
 5. **Open Application**
    - Frontend: http://localhost:3000
@@ -73,24 +83,26 @@ For detailed API documentation, please refer to the backend repository or contac
 
 ## Project Structure
 
-\`\`\`
+```
 bach-os/
 ├── src/
-│   ├── app/ # Next.js App Router pages
-│   │   ├── auth/ # Authentication pages
-│   │   ├── dashboard/ # Protected dashboard pages
-│   │   └── globals.css # Global styles
-│   ├── components/ # React components
-│   │   ├── ui/ # shadcn/ui components
-│   │   └── Dashboard/ # Dashboard-specific components
-│   ├── hooks/ # Custom React hooks
-│   ├── lib/ # Utilities and helpers
-│   ├── types/ # TypeScript type definitions
-│   └── utils/ # Utility functions
-├── public/ # Static assets and PWA files
-├── .qodo/ # Testing configuration
+│   ├── app/                 # Next.js App Router pages
+│   │   ├── auth/           # Authentication pages
+│   │   ├── dashboard/      # Protected dashboard pages
+│   │   └── globals.css     # Global styles
+│   ├── components/         # React components
+│   │   ├── ui/            # shadcn/ui components
+│   │   ├── providers/     # Context providers (Query, etc.)
+│   │   └── Dashboard/     # Dashboard-specific components
+│   ├── hooks/             # Custom React hooks (TanStack Query)
+│   ├── lib/               # Utilities and helpers
+│   ├── services/          # API service functions
+│   ├── stores/            # Zustand state stores
+│   ├── types/             # TypeScript type definitions
+│   └── utils/             # Utility functions
+├── public/                # Static assets and PWA files
 └── package.json
-\`\`\`
+```
 
 ## Technology Stack
 
@@ -100,6 +112,8 @@ bach-os/
 - **React 19**: Modern React with concurrent features
 - **TypeScript**: Type-safe development
 - **Tailwind CSS v4**: Utility-first CSS framework
+- **Zustand**: Lightweight state management for global state
+- **TanStack Query**: Powerful data fetching, caching, and synchronization
 - **shadcn/ui**: Modern UI components built on Radix UI
 - **Framer Motion**: Animation library for smooth transitions
 - **Recharts**: Composable charting library
@@ -139,6 +153,41 @@ bach-os/
 - **Reports** (`/dashboard/reports`) - Settlement reports
 - **Profile** (`/dashboard/profile`) - User profile
 - **Settings** (`/dashboard/settings`) - Mess settings
+
+## Architecture
+
+### State Management
+
+The application uses **Zustand** for global state management with the following stores:
+
+- **User Store** (`src/stores/userStore.ts`): Authentication state, user profile, and session management
+
+### Data Fetching
+
+**TanStack Query** handles all API interactions with:
+
+- Automatic caching and background refetching
+- Optimistic updates for better UX
+- Request deduplication
+- Error handling and retry logic
+- Offline support integration
+
+### API Services
+
+Organized service layer (`src/services/`) provides:
+
+- **Members Service**: CRUD operations for member management
+- **Expenses Service**: Expense tracking and categorization
+- Centralized error handling and response formatting
+
+### Custom Hooks
+
+Query hooks (`src/hooks/`) provide:
+
+- `useMembers()`: Fetch and manage member data
+- `useCreateMember()`: Create new members with optimistic updates
+- `useUpdateMember()`: Update member information
+- `useDeleteMember()`: Remove members with proper cleanup
 
 ## API Endpoints
 
@@ -188,14 +237,14 @@ The frontend connects to a separate backend API. Here are the main endpoints use
 
 ### Available Scripts
 
-\`\`\`bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm start        # Start production server
-npm run lint     # Run ESLint
-npm test         # Run Jest tests
+```bash
+npm run dev        # Start development server
+npm run build      # Build for production
+npm start          # Start production server
+npm run lint       # Run ESLint
+npm test           # Run Jest tests
 npm run test:watch # Run tests in watch mode
-\`\`\`
+```
 
 ### Environment Variables
 
@@ -212,10 +261,10 @@ NEXT_PUBLIC_API_URL=https://bachos-api.onrender.com/
 
 ### Deploy to Vercel
 
-\`\`\`bash
+```bash
 npm install -g vercel
 vercel --prod
-\`\`\`
+```
 
 The application is configured to connect to the production API automatically. For custom deployments, update the \`NEXT_PUBLIC_API_URL\` environment variable.
 
@@ -229,10 +278,12 @@ The application is configured to connect to the production API automatically. Fo
 
 ### Offline Support
 
-- Works without internet
-- Automatic data sync
-- Offline indicator
-- Service worker caching
+- **Full Page Caching**: All dashboard pages cached for offline navigation
+- **Offline Operations**: Create, update, and delete data while offline
+- **Background Sync**: Automatic sync of queued operations when online
+- **Data Integrity**: Maintains data consistency across offline/online states
+- **Offline Indicator**: Visual feedback for connection status
+- **Service Worker**: Advanced caching strategies and sync management
 
 ### Test Offline Mode
 
@@ -270,7 +321,7 @@ The application is configured to connect to the production API automatically. Fo
 ### Application won't start
 
 - Check Node.js version (18+ required)
-- Verify all dependencies are installed with \`npm install\`
+- Verify all dependencies are installed with `npm install`
 - Check .env.local configuration
 
 ### API connection issues
@@ -317,11 +368,11 @@ For issues and questions:
 - [ ] Push notifications
 - [ ] Email notifications
 - [ ] Advanced analytics
-- [ ] Mobile app (React Native)
+- [x] Mobile app 
 - [ ] Payment integration
 - [ ] Multi-language support
 - [ ] Dark mode toggle
-- [ ] Export to PDF/Excel
+- [x] Export to PDF/Excel
 
 ## Acknowledgments
 
