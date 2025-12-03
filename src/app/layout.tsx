@@ -1,4 +1,8 @@
 import { ErrorBoundary } from '@/components/error-boundary';
+import OfflineIndicator from '@/components/offline-indicator';
+import { QueryProvider } from '@/components/providers/query-provider';
+import PWAInstaller from '@/components/pwa-installer';
+import ServiceWorkerRegister from '@/components/service-worker-register';
 import { AuthProvider } from '@/lib/auth-context';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -36,12 +40,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${geistSans.className} ${geistMono.className}`}>
         <ErrorBoundary>
-          <AuthProvider>
-            {children}
-            {/* <ServiceWorkerRegister /> */}
-            {/* <PWAInstaller /> */}
-            {/* <OfflineIndicator /> */}
-          </AuthProvider>
+          <QueryProvider>
+            <AuthProvider>
+              {children}
+              <ServiceWorkerRegister />
+              <PWAInstaller />
+              <OfflineIndicator />
+            </AuthProvider>
+          </QueryProvider>
         </ErrorBoundary>
       </body>
     </html>

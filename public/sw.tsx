@@ -2,8 +2,30 @@
 
 declare const self: ServiceWorkerGlobalScope;
 
-const CACHE_NAME = 'bach-os-v1';
-const urlsToCache = ['/', '/offline.html', '/icon-192.png', '/icon-512.png'];
+const CACHE_NAME = 'bach-os-v2';
+const urlsToCache = [
+  '/',
+  '/offline.html',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/auth/login',
+  '/auth/signup',
+  '/dashboard',
+  '/dashboard/analytics',
+  '/dashboard/deposits',
+  '/dashboard/deposits/add',
+  '/dashboard/deposits/stats',
+  '/dashboard/expenses',
+  '/dashboard/expenses/add',
+  '/dashboard/meals',
+  '/dashboard/meals/add',
+  '/dashboard/members',
+  '/dashboard/members/add',
+  '/dashboard/profile',
+  '/dashboard/reports',
+  '/dashboard/settings',
+  '/dashboard/users'
+];
 
 // Install event
 self.addEventListener('install', (event: ExtendableEvent) => {

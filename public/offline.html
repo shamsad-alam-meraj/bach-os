@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Offline - Meal System</title>
+    <title>Offline - bachOS</title>
     <style>
       * {
         margin: 0;
@@ -130,24 +130,27 @@
       <div class="icon">📡</div>
       <h1>You're Offline</h1>
       <p>
-        It looks like you've lost your internet connection. Don't worry, you can still use the app
-        with cached data.
+        It looks like you've lost your internet connection. Don't worry, you can still access all
+        cached pages and continue working with your data.
       </p>
 
       <div class="features">
         <h3>What you can do offline:</h3>
         <ul>
-          <li>View your dashboard and recent data</li>
-          <li>Check meal records and expenses</li>
-          <li>View member information</li>
-          <li>Review analytics and reports</li>
+          <li>Navigate all dashboard pages (analytics, reports, settings)</li>
+          <li>View and manage members (add, edit, view profiles)</li>
+          <li>Track meals (view records, add new entries)</li>
+          <li>Manage expenses (view, add, categorize)</li>
+          <li>Handle deposits (view stats, add transactions)</li>
+          <li>Access user management and profiles</li>
+          <li>Review cached data and statistics</li>
         </ul>
       </div>
 
       <button onclick="goBack()">Go Back</button>
 
       <div class="status">
-        <strong>Tip:</strong> Your changes will sync automatically when you're back online.
+        <strong>Tip:</strong> All pages are cached for offline use. Your changes will sync automatically when you're back online.
       </div>
     </div>
 
@@ -159,11 +162,14 @@
       // Check connection status
       window.addEventListener('online', () => {
         console.log('Back online!');
-        // Trigger sync
+        // Trigger sync for all data types
         if ('serviceWorker' in navigator && 'SyncManager' in window) {
           navigator.serviceWorker.ready.then((registration) => {
             registration.sync.register('sync-meals');
             registration.sync.register('sync-expenses');
+            registration.sync.register('sync-members');
+            registration.sync.register('sync-deposits');
+            registration.sync.register('sync-profile');
           });
         }
       });

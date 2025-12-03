@@ -1,7 +1,31 @@
 // service-worker.js
-const CACHE_NAME = 'bach-os-v1';
-const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
-const API_CACHE = 'bach-os-api-v1';
+const CACHE_NAME = 'bach-os-v2';
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/offline.html',
+  '/auth/login',
+  '/auth/signup',
+  '/dashboard',
+  '/dashboard/analytics',
+  '/dashboard/deposits',
+  '/dashboard/deposits/add',
+  '/dashboard/deposits/stats',
+  '/dashboard/expenses',
+  '/dashboard/expenses/add',
+  '/dashboard/meals',
+  '/dashboard/meals/add',
+  '/dashboard/members',
+  '/dashboard/members/add',
+  '/dashboard/profile',
+  '/dashboard/reports',
+  '/dashboard/settings',
+  '/dashboard/users',
+  '/icon-192.png',
+  '/icon-512.png'
+];
+const API_CACHE = 'bach-os-api-v2';
 const OFFLINE_PAGE = '/offline.html';
 
 // Install event - cache static assets
@@ -132,9 +156,15 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('sync', (event) => {
   console.log('Background sync:', event.tag);
   if (event.tag === 'sync-meals') {
-    event.waitUntil(syncOfflineData('meals'));
+    event.waitUntil(syncOfflineData('meal'));
   } else if (event.tag === 'sync-expenses') {
-    event.waitUntil(syncOfflineData('expenses'));
+    event.waitUntil(syncOfflineData('expense'));
+  } else if (event.tag === 'sync-members') {
+    event.waitUntil(syncOfflineData('member'));
+  } else if (event.tag === 'sync-deposits') {
+    event.waitUntil(syncOfflineData('deposit'));
+  } else if (event.tag === 'sync-profile') {
+    event.waitUntil(syncOfflineData('profile'));
   }
 });
 
@@ -145,17 +175,17 @@ async function syncOfflineData(type) {
 
     if (data && data.length > 0) {
       for (const item of data) {
-        const response = await fetch(`/api/${type}`, {
-          method: 'POST',
+        const response = await fetch(item.endpoint, {
+          method: item.operation,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${await getStoredToken()}`,
           },
-          body: JSON.stringify(item),
+          body: item.operation !== 'DELETE' ? JSON.stringify(item.data) : undefined,
         });
 
         if (response.ok) {
-          await deleteOfflineData(db, type, item.id);
+          await deleteOfflineData(db, item.id);
         }
       }
     }
@@ -166,7 +196,7 @@ async function syncOfflineData(type) {
 
 function openIndexedDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('bachOSDB', 1);
+    const request = indexedDB.open('bachOSDB', 2);
 
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
@@ -177,6 +207,10 @@ function openIndexedDB() {
         const store = db.createObjectStore('offlineData', { keyPath: 'id' });
         store.createIndex('type', 'type', { unique: false });
       }
+      // Handle migration from version 1 to 2
+      if (event.oldVersion < 2) {
+        // Interface changes are backward compatible
+      }
     };
   });
 }
@@ -185,11 +219,14 @@ function getOfflineData(db, type) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(['offlineData'], 'readonly');
     const store = transaction.objectStore('offlineData');
-    const index = store.index('type');
-    const request = index.getAll(type);
+    const request = store.getAll();
 
     request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      const data = request.result;
+      const filtered = data.filter(item => item.type === type && !item.synced);
+      resolve(filtered);
+    };
   });
 }
 
@@ -206,7 +243,7 @@ function deleteOfflineData(db, type, id) {
 
 function getStoredToken() {
   return new Promise((resolve) => {
-    const request = indexedDB.open('bachOSDB', 1);
+    const request = indexedDB.open('bachOSDB', 2);
     request.onsuccess = () => {
       const db = request.result;
       const transaction = db.transaction(['offlineData'], 'readonly');

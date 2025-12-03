@@ -73,9 +73,13 @@ export const apiClient = {
       if (!isOnline()) {
         // Save to offline storage for later sync
         if (endpoint.includes('/meals')) {
-          await saveOfflineData('meal', body);
+          await saveOfflineData('meal', 'POST', endpoint, body);
         } else if (endpoint.includes('/expenses')) {
-          await saveOfflineData('expense', body);
+          await saveOfflineData('expense', 'POST', endpoint, body);
+        } else if (endpoint.includes('/members')) {
+          await saveOfflineData('member', 'POST', endpoint, body);
+        } else if (endpoint.includes('/deposits')) {
+          await saveOfflineData('deposit', 'POST', endpoint, body);
         }
         return { data: body as T, offline: true, success: true };
       }
@@ -108,9 +112,13 @@ export const apiClient = {
     } catch (error) {
       // Save to offline storage on network error
       if (endpoint.includes('/meals')) {
-        await saveOfflineData('meal', body);
+        await saveOfflineData('meal', 'POST', endpoint, body);
       } else if (endpoint.includes('/expenses')) {
-        await saveOfflineData('expense', body);
+        await saveOfflineData('expense', 'POST', endpoint, body);
+      } else if (endpoint.includes('/members')) {
+        await saveOfflineData('member', 'POST', endpoint, body);
+      } else if (endpoint.includes('/deposits')) {
+        await saveOfflineData('deposit', 'POST', endpoint, body);
       }
       return { data: body as T, offline: true, success: true };
     }
@@ -118,6 +126,17 @@ export const apiClient = {
 
   async put<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
     try {
+      // Check if online
+      if (!isOnline()) {
+        // Save to offline storage for later sync
+        if (endpoint.includes('/members')) {
+          await saveOfflineData('member', 'PUT', endpoint, body);
+        } else if (endpoint.includes('/profile')) {
+          await saveOfflineData('profile', 'PUT', endpoint, body);
+        }
+        return { data: body as T, offline: true, success: true };
+      }
+
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'PUT',
         headers: {
@@ -144,15 +163,31 @@ export const apiClient = {
       const data = await response.json();
       return { data, success: true };
     } catch (error) {
-      return {
-        error: { message: (error as Error).message, code: 'NETWORK_ERROR' },
-        success: false,
-      };
+      // Save to offline storage on network error
+      if (endpoint.includes('/members')) {
+        await saveOfflineData('member', 'PUT', endpoint, body);
+      } else if (endpoint.includes('/profile')) {
+        await saveOfflineData('profile', 'PUT', endpoint, body);
+      }
+      return { data: body as T, offline: true, success: true };
     }
   },
 
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     try {
+      // Check if online
+      if (!isOnline()) {
+        // Save to offline storage for later sync
+        if (endpoint.includes('/members')) {
+          await saveOfflineData('member', 'DELETE', endpoint);
+        } else if (endpoint.includes('/meals')) {
+          await saveOfflineData('meal', 'DELETE', endpoint);
+        } else if (endpoint.includes('/expenses')) {
+          await saveOfflineData('expense', 'DELETE', endpoint);
+        }
+        return { data: {} as T, offline: true, success: true };
+      }
+
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'DELETE',
         headers: {
@@ -178,10 +213,15 @@ export const apiClient = {
       const data = await response.json();
       return { data, success: true };
     } catch (error) {
-      return {
-        error: { message: (error as Error).message, code: 'NETWORK_ERROR' },
-        success: false,
-      };
+      // Save to offline storage on network error
+      if (endpoint.includes('/members')) {
+        await saveOfflineData('member', 'DELETE', endpoint);
+      } else if (endpoint.includes('/meals')) {
+        await saveOfflineData('meal', 'DELETE', endpoint);
+      } else if (endpoint.includes('/expenses')) {
+        await saveOfflineData('expense', 'DELETE', endpoint);
+      }
+      return { data: {} as T, offline: true, success: true };
     }
   },
 };
