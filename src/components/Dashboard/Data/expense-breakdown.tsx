@@ -23,7 +23,7 @@ export default function ExpenseBreakdown({ expenseBreakdown }: ExpenseBreakdownP
           <div className="space-y-3">
             {expenseBreakdown.slice(0, 5).map((category) => (
               <div
-                key={category.name}
+                key={category.category}
                 className="flex items-center justify-between p-3 glass-light rounded-lg"
               >
                 <div>
