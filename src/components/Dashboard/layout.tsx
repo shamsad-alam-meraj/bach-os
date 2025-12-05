@@ -21,7 +21,7 @@ export default function DashboardLayout({ children, mess, themeClass }: Dashboar
       />
       <div className="flex">
         {mess && <DashboardSidebar isOpen={sidebarOpen} />}
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className={`flex-1 p-4 md:p-6 ${mess ? 'md:ml-64' : ''}`}>{children}</main>
       </div>
     </div>
   );

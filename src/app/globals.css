@@ -283,7 +283,9 @@ body::before {
     backdrop-filter: blur(24px);
     background-color: rgb(255 255 255 / 0.6);
     border: 1px solid rgb(255 255 255 / 0.4);
-    border-radius: 16px;
+    border-radius: 0;
+    height: calc(100vh - 65px);
+    overflow: hidden;
   }
 
   .dark .glass-sidebar {

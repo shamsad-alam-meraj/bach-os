@@ -60,7 +60,7 @@ export default function AIPage() {
       <div className="flex">
         <DashboardSidebar isOpen={sidebarOpen} />
 
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 p-4 md:p-6 md:ml-64">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

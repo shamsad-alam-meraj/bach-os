@@ -53,7 +53,7 @@ export default function DashboardSidebar({ isOpen }: DashboardSidebarProps) {
 
   return (
     <aside
-      className={`fixed md:static inset-y-0 left-0 z-30 w-64 glass-sidebar md:glass-light border-r border-white/10 dark:border-white/5 transform transition-transform md:translate-x-0 ${
+      className={`fixed top-16 left-0 z-30 w-64 glass-sidebar border-r border-white/10 dark:border-white/5 transform transition-transform md:translate-x-0 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
       role="complementary"
@@ -67,7 +67,13 @@ export default function DashboardSidebar({ isOpen }: DashboardSidebarProps) {
               .filter((item) => !item.requiresMess || hasMess)
               .map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                // Check if current path matches this menu item
+                // Exact match, or direct child (but not grandchild)
+                const pathParts = pathname.split('/').filter(Boolean);
+                const hrefParts = item.href.split('/').filter(Boolean);
+                const isActive = pathname === item.href ||
+                  (pathname.startsWith(item.href + '/') &&
+                   pathParts.length === hrefParts.length + 1);
                 return (
                   <li key={item.href} role="menuitem">
                     <Link href={item.href}>
