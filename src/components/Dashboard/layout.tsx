@@ -7,13 +7,14 @@ import { useState } from 'react';
 interface DashboardLayoutProps {
   children: React.ReactNode;
   mess: any;
+  themeClass?: string;
 }
 
-export default function DashboardLayout({ children, mess }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, mess, themeClass }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={`min-h-screen bg-background ${themeClass || ''} ${themeClass ? 'page-themed' : ''}`}>
       <DashboardHeader
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}

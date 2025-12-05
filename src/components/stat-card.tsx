@@ -4,7 +4,7 @@ import type { StatCardProps } from '@/types/types';
 export default function StatCard({ title, value, description, icon }: StatCardProps) {
   return (
     <Card
-      className="glass-glow hover:glass-light transition-all"
+      className="glass-card hover:glass-light transition-all"
       role="article"
       aria-labelledby={`stat-title-${title.replace(/\s+/g, '-').toLowerCase()}`}
     >

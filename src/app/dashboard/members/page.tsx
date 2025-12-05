@@ -79,7 +79,7 @@ export default function MembersPage() {
   const isManager = mess?.managerId._id === currentUserId;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background page-theme-unified page-themed">
       <DashboardHeader
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}

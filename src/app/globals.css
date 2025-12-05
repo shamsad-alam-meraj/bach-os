@@ -1,10 +1,15 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
-/* Updated color scheme to match lavender aesthetic with glassmorphic support */
+/* Updated color scheme with new palette: 4A9651, AEA003, C63E04, A29EF8, 9F00A7 */
 :root {
+  /* New color palette */
+  --color-green: #4A9651;
+  --color-yellow: #AEA003;
+  --color-orange: #C63E04;
+  --color-lavender: #A29EF8;
+  --color-magenta: #9F00A7;
+  
   --background: oklch(0.98 0.01 258);
   --foreground: oklch(0.2 0.05 280);
   --card: oklch(1 0 0);
@@ -114,6 +119,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-green: var(--color-green);
+  --color-yellow: var(--color-yellow);
+  --color-orange: var(--color-orange);
+  --color-lavender: var(--color-lavender);
+  --color-magenta: var(--color-magenta);
 }
 
 @layer base {
@@ -143,46 +153,240 @@ body::before {
   z-index: -1;
 }
 
-/* Fixed glassmorphic utilities using proper Tailwind v4 syntax */
+/* Glassmorphic utilities */
 @layer components {
   .glass {
-    @apply backdrop-blur-md bg-white/30 dark:bg-white/10 border border-white/20 dark:border-white/10 rounded-2xl;
+    backdrop-filter: blur(12px);
+    background-color: rgb(255 255 255 / 0.3);
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 16px;
+  }
+
+  .dark .glass {
+    background-color: rgb(255 255 255 / 0.1);
+    border-color: rgb(255 255 255 / 0.1);
   }
 
   .glass-light {
-    @apply backdrop-blur-lg bg-white/40 dark:bg-white/15 border border-white/30 dark:border-white/20 rounded-xl;
+    backdrop-filter: blur(16px);
+    background-color: rgb(255 255 255 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    border-radius: 12px;
+  }
+
+  .dark .glass-light {
+    background-color: rgb(255 255 255 / 0.15);
+    border-color: rgb(255 255 255 / 0.2);
   }
 
   .glass-heavy {
-    @apply backdrop-blur-2xl bg-white/60 dark:bg-white/20 border border-white/40 dark:border-white/30 rounded-2xl;
+    backdrop-filter: blur(24px);
+    background-color: rgb(255 255 255 / 0.6);
+    border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 16px;
+  }
+
+  .dark .glass-heavy {
+    background-color: rgb(255 255 255 / 0.2);
+    border-color: rgb(255 255 255 / 0.3);
   }
 
   .glass-card {
-    @apply backdrop-blur-lg bg-white/40 dark:bg-white/15 border border-white/30 dark:border-white/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow;
+    backdrop-filter: blur(16px);
+    background-color: rgb(255 255 255 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.3s;
+  }
+
+  .dark .glass-card {
+    background-color: rgb(255 255 255 / 0.15);
+    border-color: rgb(255 255 255 / 0.2);
+  }
+
+  .glass-card:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
   }
 
   .glass-button {
-    @apply backdrop-blur-lg bg-white/40 dark:bg-white/15 border border-white/30 dark:border-white/20 px-6 py-2 rounded-xl font-medium transition-all hover:bg-white/50 dark:hover:bg-white/20 active:scale-95;
+    backdrop-filter: blur(16px);
+    background-color: rgb(255 255 255 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    padding: 0.5rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .dark .glass-button {
+    background-color: rgb(255 255 255 / 0.15);
+    border-color: rgb(255 255 255 / 0.2);
+  }
+
+  .glass-button:hover {
+    background-color: rgb(255 255 255 / 0.5);
+  }
+
+  .dark .glass-button:hover {
+    background-color: rgb(255 255 255 / 0.2);
+  }
+
+  .glass-button:active {
+    transform: scale(0.95);
   }
 
   .glass-input {
-    @apply backdrop-blur-lg bg-white/40 dark:bg-white/15 border border-white/30 dark:border-white/20 px-4 py-2 rounded-lg placeholder-white/40 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50;
+    backdrop-filter: blur(16px);
+    background-color: rgb(255 255 255 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+  }
+
+  .dark .glass-input {
+    background-color: rgb(255 255 255 / 0.15);
+    border-color: rgb(255 255 255 / 0.2);
+  }
+
+  .glass-input::placeholder {
+    color: rgb(255 255 255 / 0.4);
+  }
+
+  .dark .glass-input::placeholder {
+    color: rgb(255 255 255 / 0.3);
+  }
+
+  .glass-input:focus {
+    outline: none;
+    ring: 2px;
+    ring-color: var(--color-primary);
+    ring-opacity: 0.5;
   }
 
   .glass-header {
-    @apply backdrop-blur-xl bg-white/40 dark:bg-white/15 border border-white/30 dark:border-white/20 sticky top-0 z-40;
+    backdrop-filter: blur(20px);
+    background-color: rgb(255 255 255 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .dark .glass-header {
+    background-color: rgb(255 255 255 / 0.15);
+    border-color: rgb(255 255 255 / 0.2);
   }
 
   .glass-sidebar {
-    @apply backdrop-blur-2xl bg-white/60 dark:bg-white/20 border border-white/40 dark:border-white/30 rounded-2xl;
+    backdrop-filter: blur(24px);
+    background-color: rgb(255 255 255 / 0.6);
+    border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 16px;
+  }
+
+  .dark .glass-sidebar {
+    background-color: rgb(255 255 255 / 0.2);
+    border-color: rgb(255 255 255 / 0.3);
   }
 
   .glass-hover {
-    @apply transition-all hover:shadow-lg hover:scale-105;
+    transition: all 0.3s;
+  }
+
+  .glass-hover:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    transform: scale(1.05);
   }
 
   .glass-glow {
-    @apply backdrop-blur-lg bg-white/40 dark:bg-white/15 border border-white/30 dark:border-white/20 shadow-lg shadow-primary/20 dark:shadow-primary/10 rounded-2xl;
+    backdrop-filter: blur(16px);
+    background-color: rgb(255 255 255 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    box-shadow: 0 10px 15px -3px var(--color-primary);
+    border-radius: 16px;
+  }
+
+  .dark .glass-glow {
+    background-color: rgb(255 255 255 / 0.15);
+    border-color: rgb(255 255 255 / 0.2);
+    box-shadow: 0 10px 15px -3px var(--color-primary);
+  }
+
+  /* Consistent background for all pages - same as analytics page */
+  .page-theme-unified {
+    background: var(--background);
+  }
+
+  .dark .page-theme-unified {
+    background: var(--background);
+  }
+
+  /* Consistent glass-card styling matching analytics page */
+  .page-themed .glass-card {
+    background-color: rgb(255 255 255 / 0.4) !important;
+    border-color: rgb(255 255 255 / 0.3) !important;
+    backdrop-filter: blur(16px) !important;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .dark .page-themed .glass-card {
+    background-color: rgb(255 255 255 / 0.15) !important;
+    border-color: rgb(255 255 255 / 0.2) !important;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3) !important;
+  }
+
+  .page-themed .glass-light {
+    background-color: rgb(255 255 255 / 0.6);
+    border-color: rgb(255 255 255 / 0.4);
+    backdrop-filter: blur(16px);
+  }
+
+  .dark .page-themed .glass-light {
+    background-color: rgb(255 255 255 / 0.2);
+    border-color: rgb(255 255 255 / 0.3);
+  }
+
+  /* Ensure consistent text colors for themed pages */
+  .page-themed .glass-card h1, .page-themed .glass-card h2,
+  .page-themed .glass-card h3, .page-themed .glass-card h4,
+  .page-themed .glass-card h5, .page-themed .glass-card h6 {
+    color: var(--foreground) !important;
+  }
+
+  .page-themed .glass-card p, .page-themed .glass-card span,
+  .page-themed .glass-card div:not(.text-muted-foreground) {
+    color: var(--foreground) !important;
+  }
+
+  .page-themed .glass-card .text-muted-foreground {
+    color: var(--muted-foreground) !important;
+  }
+
+  .page-themed .glass-card .text-primary {
+    color: var(--primary) !important;
+  }
+
+  .page-themed .glass-card .text-destructive {
+    color: var(--destructive) !important;
+  }
+
+  /* Ensure form elements have proper colors */
+  .page-themed .glass-card input, .page-themed .glass-card textarea,
+  .page-themed .glass-card select {
+    color: var(--foreground) !important;
+    background-color: transparent !important;
+  }
+
+  .page-themed .glass-card input::placeholder,
+  .page-themed .glass-card textarea::placeholder {
+    color: var(--muted-foreground) !important;
+  }
+
+  /* Ensure buttons maintain their colors */
+  .page-themed .glass-card button {
+    color: inherit !important;
   }
 }
 
