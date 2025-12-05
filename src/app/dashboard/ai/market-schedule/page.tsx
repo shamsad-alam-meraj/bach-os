@@ -6,14 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { apiClient } from '@/lib/api-client';
+import { aiService } from '@/services/ai';
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowLeft, Calendar, Download, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { aiService } from '@/services/ai';
 
 export default function MarketSchedulePage() {
   const router = useRouter();
@@ -46,7 +52,7 @@ export default function MarketSchedulePage() {
     try {
       const profileRes = await apiClient.get<{ id: string; messId?: string }>('/users/profile');
       if (profileRes.data?.messId) {
-        setFormData(prev => ({ ...prev, messId: profileRes.data!.messId! }));
+        setFormData((prev) => ({ ...prev, messId: profileRes.data!.messId! }));
       }
     } catch (err) {
       // Ignore error, user can manually enter messId
@@ -149,10 +155,7 @@ Confidence: ${result.confidence}%
             className="max-w-4xl mx-auto"
           >
             <div className="flex items-center gap-4 mb-8">
-              <Button
-                variant="ghost"
-                onClick={() => router.push('/dashboard/ai')}
-              >
+              <Button variant="ghost" onClick={() => router.push('/dashboard/ai')}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to AI Tools
               </Button>
@@ -161,7 +164,9 @@ Confidence: ${result.confidence}%
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-3xl font-bold">Market Schedule Generator</h2>
-                <p className="text-muted-foreground">Generate fair market duty schedules for your mess</p>
+                <p className="text-muted-foreground">
+                  Generate fair market duty schedules for your mess
+                </p>
               </div>
             </div>
 
@@ -187,7 +192,9 @@ Confidence: ${result.confidence}%
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                      <Label htmlFor="messId">Mess ID</Label>
+                      <Label className="mb-2" htmlFor="messId">
+                        Mess ID
+                      </Label>
                       <Input
                         id="messId"
                         placeholder="Enter your mess ID"
@@ -199,10 +206,14 @@ Confidence: ${result.confidence}%
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="month">Month</Label>
+                        <Label className="mb-2" htmlFor="month">
+                          Month
+                        </Label>
                         <Select
                           value={formData.month.toString()}
-                          onValueChange={(value) => setFormData({ ...formData, month: parseInt(value) })}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, month: parseInt(value) })
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue />
@@ -218,10 +229,14 @@ Confidence: ${result.confidence}%
                       </div>
 
                       <div>
-                        <Label htmlFor="year">Year</Label>
+                        <Label className="mb-2" htmlFor="year">
+                          Year
+                        </Label>
                         <Select
                           value={formData.year.toString()}
-                          onValueChange={(value) => setFormData({ ...formData, year: parseInt(value) })}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, year: parseInt(value) })
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue />
@@ -238,7 +253,9 @@ Confidence: ${result.confidence}%
                     </div>
 
                     <div>
-                      <Label htmlFor="prompt">Requirements</Label>
+                      <Label className="mb-2" htmlFor="prompt">
+                        Requirements
+                      </Label>
                       <Textarea
                         id="prompt"
                         placeholder="Describe your market schedule requirements (e.g., number of members, special constraints, etc.)"
@@ -303,11 +320,7 @@ Confidence: ${result.confidence}%
                           <span className="text-sm text-muted-foreground">Confidence:</span>
                           <span className="ml-2 font-semibold">{result.confidence}%</span>
                         </div>
-                        <Button
-                          onClick={downloadSchedule}
-                          variant="outline"
-                          size="sm"
-                        >
+                        <Button onClick={downloadSchedule} variant="outline" size="sm">
                           <Download className="w-4 h-4 mr-2" />
                           Download
                         </Button>
@@ -316,7 +329,9 @@ Confidence: ${result.confidence}%
                   ) : (
                     <div className="text-center py-12">
                       <Calendar className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-                      <p className="text-muted-foreground">Fill out the form and generate your schedule</p>
+                      <p className="text-muted-foreground">
+                        Fill out the form and generate your schedule
+                      </p>
                     </div>
                   )}
                 </CardContent>
