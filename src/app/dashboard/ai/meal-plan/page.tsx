@@ -51,14 +51,22 @@ export default function MealPlanPage() {
         return;
       }
 
-      if (res.data) {
-        setResult(res.data.mealPlan);
+      if (res.data && (res.data as any).data) {
+        setResult((res.data as any).data.mealPlan);
       }
     } catch (err) {
       setError('Failed to generate meal plan');
     } finally {
       setLoading(false);
     }
+  };
+
+  const parseMarkdown = (text: string) => {
+    // Simple markdown parser for **bold**, *italic*, and line breaks
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br>');
   };
 
   const downloadMealPlan = () => {
@@ -205,10 +213,15 @@ Generated on: ${new Date().toLocaleDateString()}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {result ? (
+                  {loading ? (
+                    <div className="text-center py-12">
+                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                      <p className="text-muted-foreground">Generating your meal plan...</p>
+                    </div>
+                  ) : result ? (
                     <div className="space-y-4">
                       <div className="p-4 bg-muted/50 rounded-lg max-h-96 overflow-y-auto">
-                        <pre className="text-sm whitespace-pre-wrap font-sans">{result}</pre>
+                        <div className="text-sm whitespace-pre-wrap font-sans" dangerouslySetInnerHTML={{ __html: parseMarkdown(result) }} />
                       </div>
 
                       <div className="flex justify-end">
