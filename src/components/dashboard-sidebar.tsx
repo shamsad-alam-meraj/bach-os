@@ -1,6 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { apiClient } from '@/lib/api-client';
+import type { DashboardSidebarProps } from '@/types/types';
 import {
   BarChart3,
   Bot,
@@ -16,8 +18,6 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { DashboardSidebarProps } from '@/types/types';
-import { apiClient } from '@/lib/api-client';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -27,7 +27,12 @@ const menuItems = [
   { href: '/dashboard/deposits', label: 'Deposits', icon: Wallet, requiresMess: true },
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3, requiresMess: true },
   { href: '/dashboard/reports', label: 'Reports', icon: FileText, requiresMess: true },
-  { href: '/dashboard/subscriptions', label: 'Subscriptions', icon: CreditCard, requiresMess: true },
+  {
+    href: '/dashboard/subscriptions',
+    label: 'Subscriptions',
+    icon: CreditCard,
+    requiresMess: true,
+  },
   { href: '/dashboard/ai', label: 'AI Assistant', icon: Bot, requiresMess: true },
   { href: '/dashboard/profile', label: 'Profile', icon: Settings },
 ];
@@ -61,7 +66,9 @@ export default function DashboardSidebar({ isOpen }: DashboardSidebarProps) {
     >
       <nav className="p-6 space-y-4 mt-16 md:mt-0" role="navigation" aria-label="Dashboard menu">
         <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted-foreground px-2" id="menu-heading">Menu</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground px-2" id="menu-heading">
+            Menu
+          </h2>
           <ul role="menu" aria-labelledby="menu-heading">
             {menuItems
               .filter((item) => !item.requiresMess || hasMess)
@@ -71,9 +78,7 @@ export default function DashboardSidebar({ isOpen }: DashboardSidebarProps) {
                 // Exact match, or direct child (but not grandchild)
                 const pathParts = pathname.split('/').filter(Boolean);
                 const hrefParts = item.href.split('/').filter(Boolean);
-                const isActive = pathname === item.href ||
-                  (pathname.startsWith(item.href + '/') &&
-                   pathParts.length === hrefParts.length + 1);
+                const isActive = pathname === item.href;
                 return (
                   <li key={item.href} role="menuitem">
                     <Link href={item.href}>

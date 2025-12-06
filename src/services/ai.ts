@@ -8,7 +8,7 @@ export interface GenerateMarketScheduleRequest {
 }
 
 export interface MarketScheduleResponse {
-  schedule: string[];
+  schedule: { date: string; member: string }[];
   explanation: string;
   confidence: number;
 }

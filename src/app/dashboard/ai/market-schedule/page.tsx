@@ -27,7 +27,7 @@ export default function MarketSchedulePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<{
-    schedule: string[];
+    schedule: { date: string; member: string }[];
     explanation: string;
     confidence: number;
   } | null>(null);
@@ -84,8 +84,8 @@ export default function MarketSchedulePage() {
         return;
       }
 
-      if (res.data) {
-        setResult(res.data);
+      if (res.data && (res.data as any).data) {
+        setResult((res.data as any).data);
       }
     } catch (err) {
       setError('Failed to generate market schedule');
@@ -101,7 +101,7 @@ export default function MarketSchedulePage() {
 Month: ${formData.month}/${formData.year}
 
 Generated Schedule:
-${result.schedule.map((date, index) => `${index + 1}. ${date}`).join('\n')}
+${result.schedule.map((item, index) => `${index + 1}. ${item.date} - ${item.member}`).join('\n')}
 
 Explanation:
 ${result.explanation}
@@ -296,15 +296,20 @@ Confidence: ${result.confidence}%
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {result ? (
+                  {loading ? (
+                    <div className="text-center py-12">
+                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                      <p className="text-muted-foreground">Generating your market schedule...</p>
+                    </div>
+                  ) : result ? (
                     <div className="space-y-4">
                       <div className="p-4 bg-muted/50 rounded-lg">
                         <h4 className="font-semibold mb-3">Market Duty Dates:</h4>
                         <div className="space-y-2">
-                          {result.schedule.map((date, index) => (
+                          {result.schedule.map((item, index) => (
                             <div key={index} className="flex items-center gap-2">
                               <Calendar className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                              <span>{date}</span>
+                              <span>{item.date} - {item.member}</span>
                             </div>
                           ))}
                         </div>
