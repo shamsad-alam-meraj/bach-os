@@ -6,17 +6,23 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { apiClient } from '@/lib/api-client';
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowLeft, CreditCard, Check } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { subscriptionsService } from '@/services/subscriptions';
 import { Plan } from '@/types/api';
 
-export default function CreateSubscriptionPage() {
+function CreateSubscriptionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planId = searchParams.get('planId');
@@ -47,7 +53,7 @@ export default function CreateSubscriptionPage() {
 
   useEffect(() => {
     if (plans.length > 0 && formData.planId) {
-      const plan = plans.find(p => p.id === formData.planId);
+      const plan = plans.find((p) => p.id === formData.planId);
       setSelectedPlan(plan || null);
     }
   }, [plans, formData.planId]);
@@ -196,7 +202,9 @@ export default function CreateSubscriptionPage() {
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                      <Label htmlFor="plan" className="text-white">Select Plan</Label>
+                      <Label htmlFor="plan" className="text-white">
+                        Select Plan
+                      </Label>
                       <Select
                         value={formData.planId}
                         onValueChange={(value) => setFormData({ ...formData, planId: value })}
@@ -207,7 +215,8 @@ export default function CreateSubscriptionPage() {
                         <SelectContent>
                           {plans.map((plan) => (
                             <SelectItem key={plan.id} value={plan.id}>
-                              {plan.name} - ৳{plan.price}/{plan.duration} month{plan.duration > 1 ? 's' : ''}
+                              {plan.name} - ৳{plan.price}/{plan.duration} month
+                              {plan.duration > 1 ? 's' : ''}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -215,7 +224,9 @@ export default function CreateSubscriptionPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="coupon" className="text-white">Coupon Code (Optional)</Label>
+                      <Label htmlFor="coupon" className="text-white">
+                        Coupon Code (Optional)
+                      </Label>
                       <Input
                         id="coupon"
                         placeholder="Enter coupon code"
@@ -226,10 +237,14 @@ export default function CreateSubscriptionPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="payment" className="text-white">Payment Method</Label>
+                      <Label htmlFor="payment" className="text-white">
+                        Payment Method
+                      </Label>
                       <Select
                         value={formData.paymentMethod}
-                        onValueChange={(value: any) => setFormData({ ...formData, paymentMethod: value })}
+                        onValueChange={(value: any) =>
+                          setFormData({ ...formData, paymentMethod: value })
+                        }
                       >
                         <SelectTrigger className="bg-white/10 border-white/20 text-white">
                           <SelectValue />
@@ -247,7 +262,9 @@ export default function CreateSubscriptionPage() {
                       <Checkbox
                         id="autoRenew"
                         checked={formData.autoRenew}
-                        onCheckedChange={(checked) => setFormData({ ...formData, autoRenew: !!checked })}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, autoRenew: !!checked })
+                        }
                       />
                       <Label htmlFor="autoRenew" className="text-white">
                         Auto-renew subscription
@@ -293,7 +310,9 @@ export default function CreateSubscriptionPage() {
 
                       <div className="flex justify-between items-center">
                         <span className="text-white">Duration:</span>
-                        <span className="text-white">{selectedPlan.duration} month{selectedPlan.duration > 1 ? 's' : ''}</span>
+                        <span className="text-white">
+                          {selectedPlan.duration} month{selectedPlan.duration > 1 ? 's' : ''}
+                        </span>
                       </div>
 
                       <div className="flex justify-between items-center">
@@ -319,7 +338,10 @@ export default function CreateSubscriptionPage() {
                         <h4 className="font-semibold text-white mb-2">Plan Features:</h4>
                         <ul className="space-y-1">
                           {selectedPlan.features.map((feature, index) => (
-                            <li key={index} className="flex items-center gap-2 text-sm text-white/80">
+                            <li
+                              key={index}
+                              className="flex items-center gap-2 text-sm text-white/80"
+                            >
                               <Check className="w-3 h-3 text-green-400 flex-shrink-0" />
                               {feature}
                             </li>
@@ -343,5 +365,22 @@ export default function CreateSubscriptionPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function CreateSubscriptionPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <CreateSubscriptionContent />
+    </Suspense>
   );
 }
