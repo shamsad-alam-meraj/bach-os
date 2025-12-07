@@ -79,7 +79,7 @@ export default function MembersPage() {
   const isManager = mess?.managerId._id === currentUserId;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background page-theme-unified page-themed">
       <DashboardHeader
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -88,7 +88,7 @@ export default function MembersPage() {
       <div className="flex">
         <DashboardSidebar isOpen={sidebarOpen} />
 
-        <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
+        <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 md:ml-64">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

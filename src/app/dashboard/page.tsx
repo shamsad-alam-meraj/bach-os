@@ -181,7 +181,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <DashboardLayout>
+      <DashboardLayout mess={null}>
         <LoadingState />
       </DashboardLayout>
     );
@@ -210,7 +210,7 @@ export default function DashboardPage() {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <DashboardLayout mess={mess}>
+    <DashboardLayout mess={mess} themeClass="page-theme-unified">
       {/* Error and Success Messages */}
       {error && (
         <div className="mb-6 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">
