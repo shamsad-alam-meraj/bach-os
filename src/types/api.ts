@@ -169,26 +169,69 @@ export interface AnalyticsData {
 }
 
 export interface ReportData {
-  reportType: string;
-  period: string;
   summary: {
+    totalMembers: number;
     totalMeals: number;
     totalExpenses: number;
     totalDeposits: number;
-    netBalance: number;
+    mealRate: number;
+    expenseCount: number;
+    mealEntries: number;
+    depositCount: number;
+    period: {
+      start: string;
+      end: string;
+      month: string;
+    };
+    calculations: {
+      expensePerMember: string;
+      netBalance: number;
+    };
   };
-  memberBreakdown: Array<{
-    memberId: string;
+  memberReports: Array<{
+    _id: string;
     name: string;
-    mealsTaken: number;
-    contribution: number;
-    deposit: number;
+    email: string;
+    totalMeals: number;
+    totalDeposit: number;
+    mealCost: number;
+    expenseShare: number;
     balance: number;
   }>;
-  expenseBreakdown: Array<{
-    category: string;
+  detailedExpenses: Array<{
+    _id: string;
+    messId: string;
+    description: string;
     amount: number;
-    percentage: number;
+    category: string;
+    addedBy: {
+      _id: string;
+      name: string;
+      email: string;
+    };
+    expensedBy: {
+      _id: string;
+      name: string;
+      email: string;
+    };
+    date: string;
+    createdAt: string;
+    __v: number;
+  }>;
+  detailedDeposits: Array<{
+    _id: string;
+    messId: string;
+    userId: {
+      _id: string;
+      name: string;
+      email: string;
+    };
+    amount: number;
+    date: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
   }>;
 }
 
