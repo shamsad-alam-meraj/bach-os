@@ -43,7 +43,7 @@ export default function HowItWorksSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
@@ -53,30 +53,30 @@ export default function HowItWorksSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2, duration: 0.8 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -6 }}
-                className="glass-card p-4 sm:p-6 lg:p-8 text-center relative"
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="glass-card p-6 sm:p-8 lg:p-10 text-center relative overflow-hidden"
               >
-                <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-lg">
+                {/* Step number badge */}
+                <div className="absolute top-4 right-4 w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base shadow-lg">
                   {index + 1}
                 </div>
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br ${step.color} p-3 sm:p-4 lg:p-5 mx-auto mb-3 sm:mb-4 lg:mb-6 mt-3 sm:mt-4`}>
-                  <Icon className="w-full h-full text-white" />
+
+                {/* Icon */}
+                <div className={`w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br ${step.color} p-4 mx-auto mb-4 sm:mb-6 flex items-center justify-center shadow-lg`}>
+                  <Icon className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white" />
                 </div>
-                <h3 className="font-bold text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-3 lg:mb-4">{step.title}</h3>
-                <p className="text-sm sm:text-base text-foreground/70 leading-relaxed">
+
+                {/* Content */}
+                <h3 className="font-bold text-xl sm:text-2xl lg:text-3xl mb-3 sm:mb-4 text-foreground">{step.title}</h3>
+                <p className="text-sm sm:text-base lg:text-lg text-foreground/70 leading-relaxed">
                   {step.description}
                 </p>
+
+                {/* Decorative element */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"></div>
               </motion.div>
             );
           })}
-
-          {/* Connection lines for desktop */}
-          <div className="hidden md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl pointer-events-none">
-            <div className="flex justify-between items-center">
-              <div className="w-1/3 h-0.5 bg-gradient-to-r from-transparent via-purple-500/50 to-purple-500"></div>
-              <div className="w-1/3 h-0.5 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent"></div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

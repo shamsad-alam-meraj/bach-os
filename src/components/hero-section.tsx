@@ -37,8 +37,8 @@ export default function HeroSection() {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="text-base sm:text-lg md:text-xl lg:text-2xl text-foreground/80 mb-6 sm:mb-8 lg:mb-12 leading-relaxed px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto"
         >
-          Revolutionize your bachelor meal management with intelligent expense tracking,
-          AI-powered meal planning, and comprehensive analytics. Works offline with PWA support.
+          Revolutionize your bachelor meal management with intelligent expense tracking, AI-powered
+          meal planning, and comprehensive analytics. Works offline with PWA support.
         </motion.p>
 
         <motion.div
@@ -57,14 +57,15 @@ export default function HeroSection() {
               Get Started
             </motion.button>
           </Link>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="glass-light px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold border-2 border-purple-500 text-purple-600 dark:text-purple-300 hover:bg-purple-500/10 transition-all w-full sm:w-auto text-base sm:text-lg"
-          >
-            Learn More
-          </motion.button>
+          <Link href="/about" className="w-full sm:w-auto">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="glass-light px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold border-2 border-purple-500 text-purple-600 dark:text-purple-300 hover:bg-purple-500/10 transition-all w-full sm:w-auto text-base sm:text-lg"
+            >
+              Learn More
+            </motion.button>
+          </Link>
         </motion.div>
       </motion.div>
     </section>

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Github, Heart, Mail, ExternalLink } from 'lucide-react';
+import { ExternalLink, Github, Heart, Mail } from 'lucide-react';
 
 export default function LandingFooter() {
   return (
@@ -25,8 +25,8 @@ export default function LandingFooter() {
               </span>
             </div>
             <p className="text-sm sm:text-base text-foreground/70 leading-relaxed max-w-md">
-              Revolutionizing bachelor meal management with intelligent expense tracking,
-              AI-powered meal planning, and comprehensive analytics. Built for modern living.
+              Revolutionizing bachelor meal management with intelligent expense tracking, AI-powered
+              meal planning, and comprehensive analytics. Built for modern living.
             </p>
           </motion.div>
 
@@ -37,25 +37,39 @@ export default function LandingFooter() {
             transition={{ delay: 0.1, duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-base sm:text-lg">Quick Links</h3>
+            <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-base sm:text-lg">
+              Quick Links
+            </h3>
             <ul className="space-y-2 sm:space-y-3">
               <li>
-                <a href="/auth/login" className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block">
+                <a
+                  href="/auth/login"
+                  className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block"
+                >
                   Login
                 </a>
               </li>
               <li>
-                <a href="/auth/signup" className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block">
+                <a
+                  href="/auth/signup"
+                  className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block"
+                >
                   Sign Up
                 </a>
               </li>
               <li>
-                <a href="#features" className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block">
-                  Features
+                <a
+                  href="/"
+                  className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block"
+                >
+                  Home
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block">
+                <a
+                  href="/about"
+                  className="text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors block"
+                >
                   About
                 </a>
               </li>
@@ -69,14 +83,18 @@ export default function LandingFooter() {
             transition={{ delay: 0.2, duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-base sm:text-lg">Contact</h3>
+            <h3 className="font-semibold text-foreground mb-3 sm:mb-4 text-base sm:text-lg">
+              Contact
+            </h3>
             <div className="space-y-2 sm:space-y-3">
               <a
-                href="mailto:contact@bachos.com"
+                href="mailto:shamsad.alam.meraj@gmail.com"
                 className="flex items-center gap-2 text-sm sm:text-base text-foreground/70 hover:text-foreground transition-colors"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                <span className="break-all">contact@bachos.com</span>
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  shamsad.alam.meraj@gmail.com
+                </span>
               </a>
               <a
                 href="https://github.com"
@@ -102,16 +120,25 @@ export default function LandingFooter() {
         >
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-6">
             <p className="text-xs sm:text-sm text-foreground/60 text-center lg:text-left order-2 lg:order-1">
-              © 2024 bachOS. Built with <Heart className="w-4 h-4 inline text-red-500" /> by Md. Shamsad Alam Meraj.
+              © 2024 bachOS. Built with <Heart className="w-4 h-4 inline text-red-500" /> by Md.
+              Shamsad Alam Meraj.
             </p>
             <div className="flex items-center gap-4 sm:gap-6 order-1 lg:order-2">
-              <a href="/privacy" className="text-xs sm:text-sm text-foreground/60 hover:text-foreground transition-colors whitespace-nowrap">
+              <a
+                href="/privacy"
+                className="text-xs sm:text-sm text-foreground/60 hover:text-foreground transition-colors whitespace-nowrap"
+              >
                 Privacy
               </a>
-              <a href="/terms" className="text-xs sm:text-sm text-foreground/60 hover:text-foreground transition-colors whitespace-nowrap">
+              <a
+                href="/terms"
+                className="text-xs sm:text-sm text-foreground/60 hover:text-foreground transition-colors whitespace-nowrap"
+              >
                 Terms
               </a>
-              <span className="text-xs sm:text-sm text-foreground/60 whitespace-nowrap">v1.0.0</span>
+              <span className="text-xs sm:text-sm text-foreground/60 whitespace-nowrap">
+                v1.0.0
+              </span>
             </div>
           </div>
         </motion.div>
