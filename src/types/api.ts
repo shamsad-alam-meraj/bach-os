@@ -1,12 +1,12 @@
 // API Types based on BachOS API Documentation
 
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   role: 'user' | 'manager' | 'admin';
   phone?: string;
-  dateOfBirth?: Date;
+  dateOfBirth?: string;
   profileImage?: string;
   messId?: string;
   isDeleted: boolean;
@@ -15,8 +15,9 @@ export interface User {
     language: string;
     theme: 'light' | 'dark';
   };
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
 }
 
 export interface Mess {
