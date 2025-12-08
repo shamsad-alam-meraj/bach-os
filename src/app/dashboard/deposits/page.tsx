@@ -355,7 +355,7 @@ export default function DepositsPage() {
   const isManager = currentMess?.managerId?._id === currentUser?._id;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background page-theme-unified page-themed">
       <DashboardHeader
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -383,22 +383,6 @@ export default function DepositsPage() {
                 </div>
               </div>
             </div>
-
-            {/* Debug info - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <Card className="mb-4 bg-yellow-50 border-yellow-200">
-                <CardContent className="p-4 text-sm">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>Current User ID: {currentUser?._id}</div>
-                    <div>Manager ID: {currentMess?.managerId?._id}</div>
-                    <div>Is Manager: {isManager ? 'YES' : 'NO'}</div>
-                    <div>Mess ID: {messId}</div>
-                    <div>Members Count: {members.length}</div>
-                    <div>Deposits Count: {deposits.length}</div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {error && (
               <div className="mb-6 flex items-center gap-2 p-4 glass-light bg-destructive/10 text-destructive rounded-lg">

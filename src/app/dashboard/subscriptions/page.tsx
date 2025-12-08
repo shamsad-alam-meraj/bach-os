@@ -2,16 +2,16 @@
 
 import DashboardHeader from '@/components/dashboard-header';
 import DashboardSidebar from '@/components/dashboard-sidebar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api-client';
+import { subscriptionsService } from '@/services/subscriptions';
+import { Plan, Subscription } from '@/types/api';
 import { motion } from 'framer-motion';
 import { AlertCircle, Check, CreditCard, Crown, Star, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { subscriptionsService } from '@/services/subscriptions';
-import { Plan, Subscription } from '@/types/api';
 
 export default function SubscriptionsPage() {
   const router = useRouter();
@@ -48,7 +48,15 @@ export default function SubscriptionsPage() {
       // Fetch plans
       const plansRes = await subscriptionsService.getPlans();
       if (plansRes.data) {
-        setPlans(plansRes.data);
+        // Sort plans to show Premium in the middle
+        const sortedPlans = plansRes.data.sort((a, b) => {
+          const order = { 'Basic Plan': 1, 'Premium Plan': 2, 'Standard Plan': 3 };
+          return (
+            (order[a.name as keyof typeof order] || 99) -
+            (order[b.name as keyof typeof order] || 99)
+          );
+        });
+        setPlans(sortedPlans);
       }
 
       // Fetch current subscription if user has a mess
@@ -56,7 +64,7 @@ export default function SubscriptionsPage() {
         const subscriptionRes = await subscriptionsService.getMessSubscriptions(messId);
         if (subscriptionRes.data && subscriptionRes.data.length > 0) {
           // Get the active subscription
-          const activeSub = subscriptionRes.data.find(sub => sub.status === 'active');
+          const activeSub = subscriptionRes.data.find((sub) => sub.status === 'active');
           setCurrentSubscription(activeSub || subscriptionRes.data[0]);
         }
       }
@@ -139,7 +147,9 @@ export default function SubscriptionsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-semibold">{currentSubscription.planId.name}</h3>
-                      <p className="text-muted-foreground">{currentSubscription.planId.description}</p>
+                      <p className="text-muted-foreground">
+                        {currentSubscription.planId.description}
+                      </p>
                       <div className="flex items-center gap-4 mt-2">
                         <Badge variant="secondary" className="bg-green-500/20 text-green-400">
                           {currentSubscription.status}
@@ -150,10 +160,11 @@ export default function SubscriptionsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold">
-                        ৳{currentSubscription.finalAmount}
+                      <p className="text-2xl font-bold">৳{currentSubscription.finalAmount}</p>
+                      <p className="text-sm text-muted-foreground">
+                        per {currentSubscription.planId.duration} month
+                        {currentSubscription.planId.duration > 1 ? 's' : ''}
                       </p>
-                      <p className="text-sm text-muted-foreground">per {currentSubscription.planId.duration} month{currentSubscription.planId.duration > 1 ? 's' : ''}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -161,62 +172,93 @@ export default function SubscriptionsPage() {
             )}
 
             {/* Available Plans */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {plans.map((plan) => (
-                <motion.div
-                  key={plan.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: plans.indexOf(plan) * 0.1 }}
-                >
-                  <Card className="glass-card h-full flex flex-col">
-                    <CardHeader className="text-center">
-                      <div className={`w-12 h-12 ${getPlanColor(plan.name)} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                        {getPlanIcon(plan.name)}
-                      </div>
-                      <CardTitle>{plan.name}</CardTitle>
-                      <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
-                      <div className="mt-4">
-                        <span className="text-3xl font-bold">৳{plan.price}</span>
-                        <span className="text-muted-foreground">/{plan.duration} month{plan.duration > 1 ? 's' : ''}</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="flex-1 flex flex-col">
-                      <div className="mb-6">
-                        <p className="text-sm text-muted-foreground mb-2">Features:</p>
-                        <ul className="space-y-1">
-                          {plan.features.map((feature, index) => (
-                            <li key={index} className="flex items-center gap-2 text-sm">
-                              <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                        <p className="text-sm text-muted-foreground mt-4">
-                          Max members: {plan.maxMembers}
-                        </p>
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+              {plans.map((plan, index) => {
+                const isPremium = plan.name.toLowerCase().includes('premium');
+                const isMiddleCard = plans.length === 3 && index === 1;
 
-                      <div className="mt-auto">
-                        {currentSubscription?.planId.id === plan.id ? (
-                          <Button disabled className="w-full bg-green-500/20 text-green-400 cursor-not-allowed">
-                            Current Plan
-                          </Button>
-                        ) : (
-                          <Button
-                            onClick={() => handleSubscribe(plan.id)}
-                            className="w-full bg-primary hover:bg-primary/80"
-                            disabled={!userMessId}
-                          >
-                            <CreditCard className="w-4 h-4 mr-2" />
-                            {userMessId ? 'Subscribe' : 'Create Mess First'}
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                return (
+                  <motion.div
+                    key={plan._id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={isMiddleCard ? 'md:col-start-2 lg:col-start-2' : ''}
+                  >
+                    <Card
+                      className={`glass-card h-full flex flex-col relative overflow-hidden ${
+                        isPremium
+                          ? 'border-2 border-purple-500/50 bg-gradient-to-br from-purple-500/10 to-pink-500/10 shadow-lg shadow-purple-500/20'
+                          : ''
+                      }`}
+                    >
+                      {isPremium && (
+                        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-2 text-sm font-semibold">
+                          <Crown className="w-4 h-4 inline mr-1" />
+                          Most Popular
+                        </div>
+                      )}
+                      <CardHeader className={`text-center ${isPremium ? 'pt-12' : ''}`}>
+                        <div
+                          className={`w-12 h-12 sm:w-14 sm:h-14 ${getPlanColor(
+                            plan.name
+                          )} rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg`}
+                        >
+                          {getPlanIcon(plan.name)}
+                        </div>
+                        <CardTitle className="text-lg sm:text-xl lg:text-2xl">
+                          {plan.name}
+                        </CardTitle>
+                        <CardDescription className="text-muted-foreground text-sm sm:text-base px-2">
+                          {plan.description}
+                        </CardDescription>
+                        <div className="mt-4 sm:mt-6">
+                          <span className="text-3xl sm:text-4xl font-bold">৳{plan.price}</span>
+                          <span className="text-muted-foreground text-sm sm:text-base">
+                            /{plan.duration} month{plan.duration > 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex-1 flex flex-col">
+                        <div className="mb-6">
+                          <p className="text-sm text-muted-foreground mb-2">Features:</p>
+                          <ul className="space-y-1">
+                            {plan.features.map((feature, index) => (
+                              <li key={index} className="flex items-center gap-2 text-sm">
+                                <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                          <p className="text-sm text-muted-foreground mt-4">
+                            Max members: {plan.maxMembers}
+                          </p>
+                        </div>
+
+                        <div className="mt-auto">
+                          {currentSubscription && currentSubscription.planId._id === plan._id ? (
+                            <Button
+                              disabled
+                              className="w-full bg-green-500/20 text-green-400 cursor-not-allowed"
+                            >
+                              Current Plan
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => handleSubscribe(plan._id)}
+                              className="w-full bg-primary hover:bg-primary/80"
+                              disabled={!userMessId}
+                            >
+                              <CreditCard className="w-4 h-4 mr-2" />
+                              {userMessId ? 'Subscribe' : 'Create Mess First'}
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {!userMessId && (
@@ -227,7 +269,10 @@ export default function SubscriptionsPage() {
                   <p className="text-muted-foreground mb-4">
                     You need to create or join a mess before subscribing to a plan.
                   </p>
-                  <Button onClick={() => router.push('/dashboard')} className="bg-primary hover:bg-primary/80">
+                  <Button
+                    onClick={() => router.push('/dashboard')}
+                    className="bg-primary hover:bg-primary/80"
+                  >
                     Go to Dashboard
                   </Button>
                 </CardContent>

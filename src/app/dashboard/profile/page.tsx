@@ -8,21 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/api-client';
+import type { User } from '@/types/api';
 import { motion } from 'framer-motion';
-import { AlertCircle, UserIcon } from 'lucide-react';
+import { AlertCircle, Bell, Calendar, Clock, Edit3, Globe, Mail, Moon, Phone, Shield, Sun, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-interface UserProfile {
-  _id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  dateOfBirth?: string;
-  profileImage?: string;
-  role: string;
-  messId?: string;
-}
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -32,7 +22,7 @@ export default function ProfilePage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -51,9 +41,9 @@ export default function ProfilePage() {
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      const res = await apiClient.get<UserProfile>('/users/profile');
+      const res = await apiClient.get<User>('/users/profile');
       if (res.error) {
-        setError(res.error);
+        setError(typeof res.error === 'string' ? res.error : res.error.message || 'Failed to load profile');
         return;
       }
 
@@ -62,7 +52,7 @@ export default function ProfilePage() {
         setFormData({
           name: res.data.name,
           phone: res.data.phone || '',
-          dateOfBirth: res.data.dateOfBirth ? res.data.dateOfBirth.split('T')[0] : '',
+          dateOfBirth: res.data.dateOfBirth ? new Date(res.data.dateOfBirth).toISOString().split('T')[0] : '',
         });
       }
     } catch (err) {
@@ -87,19 +77,20 @@ export default function ProfilePage() {
     setSubmitting(true);
 
     try {
-      const res = await apiClient.put<UserProfile>('/users/profile', {
+      const res = await apiClient.put<User>('/users/profile', {
         name: formData.name,
         phone: formData.phone,
         dateOfBirth: formData.dateOfBirth,
       });
 
       if (res.error) {
-        setError(res.error);
+        setError(typeof res.error === 'string' ? res.error : res.error.message || 'Failed to update profile');
         return;
       }
 
       if (res.data) {
-        setUser(res.data);
+        // Refetch the complete profile data to ensure all updates are reflected
+        await fetchUserProfile();
         setSuccess('Profile updated successfully!');
         setIsEditing(false);
         setTimeout(() => setSuccess(''), 3000);
@@ -132,11 +123,11 @@ export default function ProfilePage() {
       <div className="flex">
         <DashboardSidebar isOpen={sidebarOpen} />
 
-        <main className="flex-1 p-4 md:p-6 md:ml-64">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 md:ml-64">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl"
+            className="max-w-5xl mx-auto"
           >
             <div className="mb-8">
               <h2 className="text-3xl font-bold">Profile</h2>
@@ -158,16 +149,21 @@ export default function ProfilePage() {
             )}
 
             {user && (
-              <div className="space-y-6">
+              <div className="space-y-8">
+                {/* Personal Information Card */}
                 <Card className="glass-card">
-                  <CardHeader className="flex flex-row items-center justify-between">
+                  <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                      <CardTitle>Personal Information</CardTitle>
-                      <CardDescription>Your account details</CardDescription>
+                      <CardTitle className="flex items-center gap-2">
+                        <UserIcon className="w-5 h-5" />
+                        Personal Information
+                      </CardTitle>
+                      <CardDescription>Manage your account details and preferences</CardDescription>
                     </div>
                     {!isEditing && (
-                      <Button variant="outline" onClick={() => setIsEditing(true)}>
-                        Edit
+                      <Button variant="outline" onClick={() => setIsEditing(true)} className="gap-2 w-full sm:w-auto">
+                        <Edit3 className="w-4 h-4" />
+                        Edit Profile
                       </Button>
                     )}
                   </CardHeader>
@@ -175,57 +171,75 @@ export default function ProfilePage() {
                   <CardContent>
                     {isEditing ? (
                       <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-2">
-                          <label htmlFor="name" className="text-sm font-medium">
-                            Full Name
-                          </label>
-                          <Input
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            disabled={submitting}
-                          />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                          <div className="space-y-2">
+                            <label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
+                              <UserIcon className="w-4 h-4" />
+                              Full Name
+                            </label>
+                            <Input
+                              id="name"
+                              name="name"
+                              value={formData.name}
+                              onChange={handleChange}
+                              required
+                              disabled={submitting}
+                              className="glass-light"
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <label htmlFor="phone" className="text-sm font-medium flex items-center gap-2">
+                              <Phone className="w-4 h-4" />
+                              Phone Number
+                            </label>
+                            <Input
+                              id="phone"
+                              name="phone"
+                              type="tel"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              disabled={submitting}
+                              className="glass-light"
+                            />
+                          </div>
+
+                          <div className="space-y-2 sm:col-span-2">
+                            <label htmlFor="dateOfBirth" className="text-sm font-medium flex items-center gap-2">
+                              <Calendar className="w-4 h-4" />
+                              Date of Birth
+                            </label>
+                            <Input
+                              id="dateOfBirth"
+                              name="dateOfBirth"
+                              type="date"
+                              value={formData.dateOfBirth}
+                              onChange={handleChange}
+                              disabled={submitting}
+                              className="glass-light"
+                            />
+                          </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <label htmlFor="phone" className="text-sm font-medium">
-                            Phone Number
-                          </label>
-                          <Input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            disabled={submitting}
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <label htmlFor="dateOfBirth" className="text-sm font-medium">
-                            Date of Birth
-                          </label>
-                          <Input
-                            id="dateOfBirth"
-                            name="dateOfBirth"
-                            type="date"
-                            value={formData.dateOfBirth}
-                            onChange={handleChange}
-                            disabled={submitting}
-                          />
-                        </div>
-
-                        <div className="flex gap-4">
-                          <Button type="submit" disabled={submitting} className="flex-1">
-                            {submitting ? 'Saving...' : 'Save Changes'}
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+                          <Button type="submit" disabled={submitting} className="flex-1 gap-2 order-2 sm:order-1">
+                            {submitting ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                Saving...
+                              </>
+                            ) : (
+                              <>
+                                <Edit3 className="w-4 h-4" />
+                                Save Changes
+                              </>
+                            )}
                           </Button>
                           <Button
                             type="button"
                             variant="outline"
                             onClick={() => setIsEditing(false)}
-                            className="flex-1 bg-transparent"
+                            className="flex-1 bg-transparent order-1 sm:order-2"
                             disabled={submitting}
                           >
                             Cancel
@@ -233,44 +247,186 @@ export default function ProfilePage() {
                         </div>
                       </form>
                     ) : (
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-4 p-4 glass-light rounded-lg">
-                          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                            <UserIcon className="w-6 h-6 text-primary" />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        {/* Basic Information */}
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                              <UserIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm text-muted-foreground">Full Name</p>
+                              <p className="text-base sm:text-lg font-semibold truncate">{user.name}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Name</p>
-                            <p className="text-lg font-semibold">{user.name}</p>
+
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
+                              <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm text-muted-foreground">Email Address</p>
+                              <p className="text-base sm:text-lg font-semibold break-all sm:truncate">{user.email}</p>
+                            </div>
                           </div>
+
+                          {user.phone && (
+                            <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm text-muted-foreground">Phone Number</p>
+                                <p className="text-base sm:text-lg font-semibold truncate">{user.phone}</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
-                        <div className="p-4 glass-light rounded-lg">
-                          <p className="text-sm text-muted-foreground">Email</p>
-                          <p className="text-lg font-semibold">{user.email}</p>
-                        </div>
+                        {/* Additional Information */}
+                        <div className="space-y-4">
+                          {user.dateOfBirth && (
+                            <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm text-muted-foreground">Date of Birth</p>
+                                <p className="text-base sm:text-lg font-semibold">
+                                  {new Date(user.dateOfBirth).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          )}
 
-                        {user.phone && (
-                        <div className="p-4 glass-light rounded-lg">
-                            <p className="text-sm text-muted-foreground">Phone</p>
-                            <p className="text-lg font-semibold">{user.phone}</p>
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                              <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm text-muted-foreground">Account Role</p>
+                              <p className="text-base sm:text-lg font-semibold capitalize">{user.role}</p>
+                            </div>
                           </div>
-                        )}
 
-                        {user.dateOfBirth && (
-                        <div className="p-4 glass-light rounded-lg">
-                            <p className="text-sm text-muted-foreground">Date of Birth</p>
-                            <p className="text-lg font-semibold">
-                              {new Date(user.dateOfBirth).toLocaleDateString()}
-                            </p>
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                              {user.preferences?.theme === 'dark' ? <Moon className="w-5 h-5 sm:w-6 sm:h-6 text-white" /> : <Sun className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm text-muted-foreground">Preferred Theme</p>
+                              <p className="text-base sm:text-lg font-semibold capitalize">{user.preferences?.theme || 'light'}</p>
+                            </div>
                           </div>
-                        )}
-
-                        <div className="p-4 glass-light rounded-lg">
-                          <p className="text-sm text-muted-foreground">Role</p>
-                          <p className="text-lg font-semibold capitalize">{user.role}</p>
                         </div>
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+
+                {/* Preferences Card */}
+                <Card className="glass-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Bell className="w-5 h-5" />
+                      Preferences & Settings
+                    </CardTitle>
+                    <CardDescription>Your app preferences and notification settings</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+                      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Bell className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-muted-foreground">Notifications</p>
+                          <p className="font-semibold">{user.preferences?.notifications ? 'Enabled' : 'Disabled'}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Globe className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-muted-foreground">Language</p>
+                          <p className="font-semibold uppercase">{user.preferences?.language || 'en'}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          {user.preferences?.theme === 'dark' ? <Moon className="w-5 h-5 text-white" /> : <Sun className="w-5 h-5 text-white" />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-muted-foreground">Theme</p>
+                          <p className="font-semibold capitalize">{user.preferences?.theme || 'light'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Account Information Card */}
+                <Card className="glass-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="w-5 h-5" />
+                      Account Information
+                    </CardTitle>
+                    <CardDescription>Account creation and last update details</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Calendar className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-muted-foreground">Account Created</p>
+                          <p className="font-semibold text-sm sm:text-base">
+                            {new Date(user.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(user.createdAt).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass-light rounded-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Clock className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-muted-foreground">Last Updated</p>
+                          <p className="font-semibold text-sm sm:text-base">
+                            {new Date(user.updatedAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(user.updatedAt).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

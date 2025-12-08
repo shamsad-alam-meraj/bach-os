@@ -1,12 +1,12 @@
 // API Types based on BachOS API Documentation
 
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   role: 'user' | 'manager' | 'admin';
   phone?: string;
-  dateOfBirth?: Date;
+  dateOfBirth?: string;
   profileImage?: string;
   messId?: string;
   isDeleted: boolean;
@@ -15,8 +15,9 @@ export interface User {
     language: string;
     theme: 'light' | 'dark';
   };
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
 }
 
 export interface Mess {
@@ -78,7 +79,7 @@ export interface Deposit {
 }
 
 export interface Plan {
-  id: string;
+  _id: string;
   name: string;
   description?: string;
   maxMembers: number;
@@ -169,26 +170,69 @@ export interface AnalyticsData {
 }
 
 export interface ReportData {
-  reportType: string;
-  period: string;
   summary: {
+    totalMembers: number;
     totalMeals: number;
     totalExpenses: number;
     totalDeposits: number;
-    netBalance: number;
+    mealRate: number;
+    expenseCount: number;
+    mealEntries: number;
+    depositCount: number;
+    period: {
+      start: string;
+      end: string;
+      month: string;
+    };
+    calculations: {
+      expensePerMember: string;
+      netBalance: number;
+    };
   };
-  memberBreakdown: Array<{
-    memberId: string;
+  memberReports: Array<{
+    _id: string;
     name: string;
-    mealsTaken: number;
-    contribution: number;
-    deposit: number;
+    email: string;
+    totalMeals: number;
+    totalDeposit: number;
+    mealCost: number;
+    expenseShare: number;
     balance: number;
   }>;
-  expenseBreakdown: Array<{
-    category: string;
+  detailedExpenses: Array<{
+    _id: string;
+    messId: string;
+    description: string;
     amount: number;
-    percentage: number;
+    category: string;
+    addedBy: {
+      _id: string;
+      name: string;
+      email: string;
+    };
+    expensedBy: {
+      _id: string;
+      name: string;
+      email: string;
+    };
+    date: string;
+    createdAt: string;
+    __v: number;
+  }>;
+  detailedDeposits: Array<{
+    _id: string;
+    messId: string;
+    userId: {
+      _id: string;
+      name: string;
+      email: string;
+    };
+    amount: number;
+    date: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
   }>;
 }
 

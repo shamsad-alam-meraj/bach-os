@@ -25,6 +25,7 @@ export default function AIPage() {
     {
       id: 'market-schedule',
       title: 'Market Schedule Generator',
+      shortTitle: 'Generate Schedule',
       description: 'Generate fair and efficient market duty schedules for your mess members',
       icon: Calendar,
       color: '#C63E04',
@@ -38,6 +39,7 @@ export default function AIPage() {
     {
       id: 'meal-plan',
       title: 'Meal Plan Generator',
+      shortTitle: 'Create Meal Plan',
       description: 'Create nutritious and cost-effective meal plans for your mess',
       icon: ChefHat,
       color: '#A29EF8',
@@ -114,14 +116,15 @@ export default function AIPage() {
                       </div>
 
                       <div className="mt-auto">
-                        <Button
-                          onClick={() => router.push(`/dashboard/ai/${tool.id}`)}
-                          className="w-full bg-primary hover:bg-primary/80 group-hover:bg-primary/90 transition-colors"
-                        >
-                          <Bot className="w-4 h-4 mr-2" />
-                          Try {tool.title}
-                        </Button>
-                      </div>
+                       <Button
+                         onClick={() => router.push(`/dashboard/ai/${tool.id}`)}
+                         className="w-full bg-primary hover:bg-primary/80 group-hover:bg-primary/90 transition-colors"
+                       >
+                         <Bot className="w-4 h-4 mr-2" />
+                         <span className="hidden sm:inline">Try {tool.title}</span>
+                         <span className="sm:hidden">{tool.shortTitle}</span>
+                       </Button>
+                     </div>
                     </CardContent>
                   </Card>
                 </motion.div>
