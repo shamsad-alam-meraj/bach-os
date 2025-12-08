@@ -1,15 +1,15 @@
 'use client';
 
+import AdvancedFeaturesSection from '@/components/advanced-features-section';
+import FeaturesSection from '@/components/features-section';
+import HeroSection from '@/components/hero-section';
+import HowItWorksSection from '@/components/how-it-works-section';
+import LandingFooter from '@/components/landing-footer';
+import LandingHeader from '@/components/landing-header';
+import WhyChooseSection from '@/components/why-choose-section';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import LandingHeader from '@/components/landing-header';
-import HeroSection from '@/components/hero-section';
-import FeaturesSection from '@/components/features-section';
-import HowItWorksSection from '@/components/how-it-works-section';
-import AdvancedFeaturesSection from '@/components/advanced-features-section';
-import WhyChooseSection from '@/components/why-choose-section';
-import LandingFooter from '@/components/landing-footer';
 
 /**
  * Landing page component that serves as the entry point of the application
@@ -27,6 +27,8 @@ export default function Home() {
       router.replace('/dashboard');
     }
   }, [isAuthenticated, router]);
+
+  
 
   // Show loading state while determining authentication status
   if (isLoading) {
