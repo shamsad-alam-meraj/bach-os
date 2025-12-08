@@ -4,7 +4,12 @@ import DashboardHeader from '@/components/dashboard-header';
 import DashboardSidebar from '@/components/dashboard-sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { apiClient } from '@/lib/api-client';
+import { dashboardService, GenerateReportParams } from '@/services/dashboard';
+import { ReportData } from '@/types/api';
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -19,63 +24,12 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-}
-
-interface Expense {
-  _id: string;
-  description: string;
-  amount: number;
-  category: string;
-  addedBy: User;
-  expensedBy: User;
-  date: string;
-}
-
-interface Deposit {
-  _id: string;
-  userId: User;
-  amount: number;
-  description?: string;
-  date: string;
-}
-
-interface MemberReport {
-  name: string;
-  email: string;
-  totalMeals: number;
-  mealCost: number;
-  totalDeposit: number;
-  expenseShare: number;
-  balance: number;
-}
-
-interface ReportsData {
-  summary: {
-    totalMembers: number;
-    totalMeals: number;
-    totalExpenses: number;
-    totalDeposits: number;
-    mealRate: number;
-    expenseCount: number;
-    mealEntries: number;
-    depositCount: number;
-    period: {
-      start: string;
-      end: string;
-      month: string;
-    };
-  };
-  memberReports: MemberReport[];
-  detailedExpenses: Expense[];
-  detailedDeposits: Deposit[];
-  calculations: {
-    expensePerMember: string;
-    netBalance: number;
-  };
+interface ReportParams {
+  type: 'monthly' | 'member' | 'expense';
+  month?: number;
+  year?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export default function ReportsPage() {
@@ -83,7 +37,12 @@ export default function ReportsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [reportsData, setReportsData] = useState<ReportsData | null>(null);
+  const [reportsData, setReportsData] = useState<ReportData | null>(null);
+  const [reportParams, setReportParams] = useState<ReportParams>({
+    type: 'monthly',
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear(),
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -105,8 +64,8 @@ export default function ReportsPage() {
 
       const messId = profileRes.data.messId;
 
-      // Fetch reports data from backend
-      const reportsRes = await apiClient.get<ReportsData>(`/reports/${messId}`);
+      // Fetch reports data using dashboard service
+      const reportsRes = await dashboardService.generateReport(messId, reportParams);
       if (reportsRes.data) {
         setReportsData(reportsRes.data);
       } else {
@@ -122,21 +81,20 @@ export default function ReportsPage() {
   const downloadReport = () => {
     if (!reportsData) return;
 
-    const { memberReports, summary } = reportsData;
-    const month = summary.period.month;
+    const { memberBreakdown, period } = reportsData;
 
-    let csv = 'Member Settlement Report - ' + month + '\n\n';
-    csv += 'Name,Total Meals,Meal Cost,Total Deposit,Balance\n';
+    let csv = 'Member Settlement Report - ' + period + '\n\n';
+    csv += 'Name,Meals Taken,Contribution,Deposit,Balance\n';
 
-    memberReports.forEach((report) => {
-      csv += `"${report.name}",${report.totalMeals},${report.mealCost.toFixed(
+    memberBreakdown.forEach((member) => {
+      csv += `"${member.name}",${member.mealsTaken},${member.contribution.toFixed(
         2
-      )},${report.totalDeposit.toFixed(2)},${report.balance.toFixed(2)}\n`;
+      )},${member.deposit.toFixed(2)},${member.balance.toFixed(2)}\n`;
     });
 
     const element = document.createElement('a');
     element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
-    element.setAttribute('download', `meal-report-${month.replace(' ', '-')}.csv`);
+    element.setAttribute('download', `meal-report-${period.replace(' ', '-')}.csv`);
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
@@ -164,7 +122,7 @@ export default function ReportsPage() {
     );
   }
 
-  const { summary, memberReports, detailedExpenses, detailedDeposits, calculations } = reportsData;
+  const { summary, memberBreakdown, expenseBreakdown, period } = reportsData;
 
   return (
     <div className="min-h-screen bg-background">
@@ -182,7 +140,7 @@ export default function ReportsPage() {
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold">Reports</h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  Settlement and detailed reports for {summary.period.month}
+                  Settlement and detailed reports for {period}
                 </p>
               </div>
               <Button onClick={downloadReport} className="gap-2">
@@ -210,7 +168,7 @@ export default function ReportsPage() {
                 <CardContent>
                   <div className="text-3xl font-bold">{summary.totalMeals}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {summary.mealEntries} entries
+                    Total meals
                   </p>
                 </CardContent>
               </Card>
@@ -227,7 +185,7 @@ export default function ReportsPage() {
                     ৳{summary.totalExpenses.toLocaleString()}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {summary.expenseCount} transactions
+                    Total expenses
                   </p>
                 </CardContent>
               </Card>
@@ -244,7 +202,7 @@ export default function ReportsPage() {
                     ৳{summary.totalDeposits.toLocaleString()}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {summary.depositCount} deposits
+                    Total deposits
                   </p>
                 </CardContent>
               </Card>
@@ -252,13 +210,13 @@ export default function ReportsPage() {
               <Card className="glass-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Meal Rate
+                    Net Balance
                     <Users className="w-4 h-4 text-blue-500" />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">৳{summary.mealRate}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Per meal</p>
+                  <div className="text-3xl font-bold">৳{summary.netBalance.toFixed(2)}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Overall balance</p>
                 </CardContent>
               </Card>
             </div>
@@ -270,54 +228,51 @@ export default function ReportsPage() {
                 <CardDescription>Balance = Total Deposit - Meal Cost</CardDescription>
               </CardHeader>
               <CardContent>
-                {memberReports.length === 0 ? (
+                {memberBreakdown.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">No data available</div>
                 ) : (
                   <div className="space-y-4">
-                    {memberReports.map((report, idx) => (
+                    {memberBreakdown.map((member, idx) => (
                       <motion.div
-                        key={idx}
+                        key={member.memberId}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
                       >
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-base sm:text-lg">{report.name}</h3>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-sm text-muted-foreground">{report.email}</span>
-                          </div>
+                          <h3 className="font-semibold text-base sm:text-lg">{member.name}</h3>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap mt-2">
                             <div className="flex items-center gap-1">
                               <span>Meals:</span>
-                              <span className="font-medium">{report.totalMeals}</span>
+                              <span className="font-medium">{member.mealsTaken}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <span>Meal Cost:</span>
-                              <span className="font-medium">৳{report.mealCost.toFixed(2)}</span>
+                              <span>Contribution:</span>
+                              <span className="font-medium">৳{member.contribution.toFixed(2)}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <span>Total Deposit:</span>
-                              <span className="font-medium">৳{report.totalDeposit.toFixed(2)}</span>
+                              <span>Deposit:</span>
+                              <span className="font-medium">৳{member.deposit.toFixed(2)}</span>
                             </div>
                           </div>
                         </div>
                         <div className="text-right flex-shrink-0">
                           <div className="flex items-center justify-end gap-2 mb-2">
-                            {report.balance >= 0 ? (
+                            {member.balance >= 0 ? (
                               <TrendingUp className="w-5 h-5 text-green-600" />
                             ) : (
                               <TrendingDown className="w-5 h-5 text-red-600" />
                             )}
                             <span
                               className={`text-2xl font-bold ${
-                                report.balance >= 0 ? 'text-green-600' : 'text-red-600'
+                                member.balance >= 0 ? 'text-green-600' : 'text-red-600'
                               }`}
                             >
-                              ৳{Math.abs(report.balance).toFixed(2)}
+                              ৳{Math.abs(member.balance).toFixed(2)}
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            {report.balance >= 0 ? 'Will receive' : 'Will pay'}
+                            {member.balance >= 0 ? 'Will receive' : 'Will pay'}
                           </p>
                         </div>
                       </motion.div>
@@ -327,51 +282,39 @@ export default function ReportsPage() {
               </CardContent>
             </Card>
 
-            {/* Expense Details */}
+            {/* Expense Breakdown */}
             <Card className="glass-card mb-6">
               <CardHeader>
-                <CardTitle>Expense Details</CardTitle>
+                <CardTitle>Expense Breakdown</CardTitle>
                 <CardDescription>
-                  All recorded expenses with expensed by information
+                  Expenses by category
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {detailedExpenses.length === 0 ? (
+                {expenseBreakdown.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     No expenses recorded
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {detailedExpenses.map((expense) => (
+                    {expenseBreakdown.map((expense) => (
                       <motion.div
-                        key={expense._id}
+                        key={expense.category}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
                       >
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-base sm:text-lg">{expense.description}</h3>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-sm text-muted-foreground capitalize">
-                              {expense.category}
-                            </span>
-                            <span className="text-sm text-muted-foreground">
-                              {new Date(expense.date).toLocaleDateString()}
-                            </span>
-                          </div>
+                          <h3 className="font-semibold text-base sm:text-lg capitalize">{expense.category}</h3>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap mt-2">
                             <div className="flex items-center gap-1">
-                              <span>Expensed by:</span>
-                              <span className="font-medium">{expense?.expensedBy?.name}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span>Added by:</span>
-                              <span className="font-medium">{expense.addedBy.name}</span>
+                              <span>Percentage:</span>
+                              <span className="font-medium">{expense.percentage.toFixed(1)}%</span>
                             </div>
                           </div>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-2xl font-bold text-primary">৳{expense.amount}</p>
+                          <p className="text-2xl font-bold text-primary">৳{expense.amount.toFixed(2)}</p>
                         </div>
                       </motion.div>
                     ))}
@@ -380,49 +323,6 @@ export default function ReportsPage() {
               </CardContent>
             </Card>
 
-            {/* Deposit Details */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle>Deposit Details</CardTitle>
-                <CardDescription>All member deposits</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {detailedDeposits.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    No deposits recorded
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {detailedDeposits.map((deposit) => (
-                      <motion.div
-                        key={deposit._id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-base sm:text-lg">{deposit.userId.name}</h3>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-sm text-muted-foreground">
-                              {deposit.userId.email}
-                            </span>
-                            <span className="text-sm text-muted-foreground">
-                              {new Date(deposit.date).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <div className="text-sm text-muted-foreground mt-2">
-                            {deposit.description || 'No description'}
-                          </div>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-2xl font-bold text-green-600">৳{deposit.amount}</p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </motion.div>
         </main>
       </div>
