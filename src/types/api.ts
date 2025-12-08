@@ -79,7 +79,7 @@ export interface Deposit {
 }
 
 export interface Plan {
-  id: string;
+  _id: string;
   name: string;
   description?: string;
   maxMembers: number;

@@ -179,7 +179,7 @@ export default function SubscriptionsPage() {
 
                 return (
                   <motion.div
-                    key={plan.id}
+                    key={plan._id}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.1 }}
@@ -236,7 +236,7 @@ export default function SubscriptionsPage() {
                         </div>
 
                         <div className="mt-auto">
-                          {currentSubscription && currentSubscription.planId.id === plan.id ? (
+                          {currentSubscription && currentSubscription.planId._id === plan._id ? (
                             <Button
                               disabled
                               className="w-full bg-green-500/20 text-green-400 cursor-not-allowed"
@@ -245,7 +245,7 @@ export default function SubscriptionsPage() {
                             </Button>
                           ) : (
                             <Button
-                              onClick={() => handleSubscribe(plan.id)}
+                              onClick={() => handleSubscribe(plan._id)}
                               className="w-full bg-primary hover:bg-primary/80"
                               disabled={!userMessId}
                             >
