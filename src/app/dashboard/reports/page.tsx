@@ -84,7 +84,9 @@ export default function ReportsPage() {
     csv += 'Name,Email,Meals Taken,Total Deposit,Meal Cost,Balance\n';
 
     memberReports.forEach((member) => {
-      csv += `"${member.name}","${member.email}",${member.totalMeals},${member.totalDeposit},${member.mealCost.toFixed(2)},${member.balance.toFixed(2)}\n`;
+      csv += `"${member.name}","${member.email}",${member.totalMeals},${
+        member.totalDeposit
+      },${member.mealCost.toFixed(2)},${member.balance.toFixed(2)}\n`;
     });
 
     const element = document.createElement('a');
@@ -210,48 +212,6 @@ export default function ReportsPage() {
               </Card>
             </div>
 
-            {/* Additional Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <Card className="glass-card">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Meal Rate
-                    <TrendingUp className="w-4 h-4 text-blue-500" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">৳{summary.mealRate}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Per meal cost</p>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Net Balance
-                    <DollarSign className="w-4 h-4 text-purple-500" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">৳{summary.calculations?.netBalance?.toFixed(2) || '0.00'}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Overall balance</p>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Expense Per Member
-                    <Users className="w-4 h-4 text-indigo-500" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">৳{summary.calculations?.expensePerMember || '0.00'}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Average share</p>
-                </CardContent>
-              </Card>
-            </div>
-
             {/* Member Reports */}
             <Card className="glass-card mb-6">
               <CardHeader>
@@ -260,7 +220,9 @@ export default function ReportsPage() {
               </CardHeader>
               <CardContent>
                 {memberReports.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">No member data available</div>
+                  <div className="text-center py-12 text-muted-foreground">
+                    No member data available
+                  </div>
                 ) : (
                   <div className="space-y-4">
                     {memberReports.map((member, idx) => (
@@ -337,7 +299,9 @@ export default function ReportsPage() {
                         className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
                       >
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-base sm:text-lg">{expense.description}</h3>
+                          <h3 className="font-semibold text-base sm:text-lg">
+                            {expense.description}
+                          </h3>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap mt-2">
                             <div className="flex items-center gap-1">
                               <span>Category:</span>
@@ -349,7 +313,9 @@ export default function ReportsPage() {
                             </div>
                             <div className="flex items-center gap-1">
                               <span>Date:</span>
-                              <span className="font-medium">{new Date(expense.date).toLocaleDateString()}</span>
+                              <span className="font-medium">
+                                {new Date(expense.date).toLocaleDateString()}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -390,7 +356,9 @@ export default function ReportsPage() {
                         className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-light rounded-lg border border-white/20 dark:border-white/10 gap-4"
                       >
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-base sm:text-lg">{deposit.description}</h3>
+                          <h3 className="font-semibold text-base sm:text-lg">
+                            {deposit.description}
+                          </h3>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap mt-2">
                             <div className="flex items-center gap-1">
                               <span>Deposited by:</span>
@@ -402,7 +370,9 @@ export default function ReportsPage() {
                             </div>
                             <div className="flex items-center gap-1">
                               <span>Date:</span>
-                              <span className="font-medium">{new Date(deposit.date).toLocaleDateString()}</span>
+                              <span className="font-medium">
+                                {new Date(deposit.date).toLocaleDateString()}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -410,9 +380,7 @@ export default function ReportsPage() {
                           <p className="text-2xl font-bold text-green-500">
                             ৳{deposit.amount.toFixed(2)}
                           </p>
-                          <p className="text-sm text-muted-foreground">
-                            Deposit
-                          </p>
+                          <p className="text-sm text-muted-foreground">Deposit</p>
                         </div>
                       </motion.div>
                     ))}
