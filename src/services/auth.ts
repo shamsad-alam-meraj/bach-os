@@ -1,5 +1,6 @@
 import { apiClient, ApiResponse } from '@/lib/api-client';
 import { User } from '@/types/api';
+import { BASE_URL } from '@/utils/baseUrl';
 
 export interface LoginRequest {
   email: string;
@@ -25,5 +26,9 @@ export const authService = {
 
   async signup(data: SignupRequest): Promise<ApiResponse<AuthResponse>> {
     return apiClient.post<AuthResponse>('/auth/signup', data);
+  },
+
+  googleLogin(): void {
+    window.location.href = `${BASE_URL}api/auth/google`;
   },
 };
